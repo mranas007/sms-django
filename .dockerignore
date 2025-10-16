@@ -1,0 +1,29 @@
+# Python virtual environment
+venv/
+.venv/
+
+# Python compiled files
+*.pyc
+__pycache__/
+
+# Django specific
+db.sqlite3
+media/  # If you are serving media files externally or use a volume
+staticfiles/ # If you are collecting static files during build and then serving them externally
+
+# Version control
+.git/
+.gitignore
+
+# Docker specific
+Dockerfile
+.dockerignore
+
+# Operating system specific files
+.DS_Store
+Thumbs.db
+
+# Any local development settings or secrets
+local_settings.py
+*.env
+.env

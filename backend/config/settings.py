@@ -32,7 +32,6 @@ AUTH_USER_MODEL = 'accounts.User'
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,9 +42,11 @@ INSTALLED_APPS = [
     
     # apps
     'apps.accounts',
-    'apps.core',
     'apps.student',
     'apps.teacher',
+
+    # packages and libraries
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

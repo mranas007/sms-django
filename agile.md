@@ -72,13 +72,13 @@ Instead of building the entire house and showing it at the end (Waterfall), you 
 
 **Tasks:**
 - [done] Create custom User model or extend with Profile
-- [ ] Implement role system (Admin/Teacher/Student)
-- [ ] Build registration form (admin only for now)
-- [ ] Build login page
-- [ ] Build logout functionality
-- [ ] Create role-based dashboard views
-- [ ] Add basic dashboard templates for each role
-- [ ] Write tests for authentication
+- [done] Implement role system (Admin/Teacher/Student)
+- [done] Build registration form (admin only for now)
+- [done] Build login page
+- [done] Build logout functionality
+- [done] Create role-based dashboard views
+- [done] Add basic dashboard templates for each role
+- [Not_Sure] Write tests for authentication
 
 **Acceptance Criteria:**
 - Admin can create users with different roles

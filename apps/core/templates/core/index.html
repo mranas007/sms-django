@@ -1,9 +1,0 @@
-{% extends "main.html" %}
-{% load static %}
-{% block content %}
-    <h1 class="text-3xl font-bold underline">
-        Welcome to the School Management System</h1>
-    <p>This is the core application.</p>
-    <a href="{% url "student:index" %}" class="text-blue-500 hover:underline">Student Management</a>
-    <a href="{% url "teacher:index" %}" class="text-blue-500 hover:underline">Teacher Management</a>
-{% endblock content %}

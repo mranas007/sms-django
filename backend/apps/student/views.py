@@ -1,12 +1,17 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from .permission import RoleRequired
+from rest_framework.generics import ListAPIView
+from .permissions import RoleRequiredPermission
+from .serializers import StudentDashboardSerializer
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
-class DashboardView(APIView):
-    permission_classes = [IsAuthenticated, RoleRequired('Student')]
+class DashboardView(ListAPIView):
+    permission_classes = [RoleRequiredPermission]
+    allowed_roles = ["Student"]
+    serializer_class = StudentDashboardSerializer
 
-    def get(self, request):
-        return Response({"greet":"hello world"}, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        # Get the base queryset
+        return User.objects.filter(role="Student")
+

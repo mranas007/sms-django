@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
-import AxiosApi from '../../services/AxiosApi.jsx'
+import Api from '../../services/Api.jsx'
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext.jsx";
 
 function StudentDashboard(){
-    const { isAuthenticated } = useAuthContext();
+    const { token } = useAuthContext();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-      if (!isAuthenticated) {
+      if (!token) {
         navigate("/login");
       } else {
         fetchData();
       }
-    }, [isAuthenticated, navigate]);
+    }, [token, navigate]);
 
     // fetch data from backend for student dashboard
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await AxiosApi.get('student/dashboard/');
+        const res = await Api.get('/student/dashboard/');
         console.log(res.data);
       } catch (error) {
         console.log("Something went wrong during student data fetch: ", error.message);

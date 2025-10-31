@@ -1,6 +1,3 @@
-Perfect! Let's build this out properly. I'll give you the complete architecture for all 3 phases so you can see the full picture, then work backward to know exactly where to start.
-
----
 
 ## **PROJECT: School Management System (SMS)**
 
@@ -109,9 +106,9 @@ Class (or Course)
 ```
 
 ### **Tech Stack (Phase 1)**
-- **Backend:** Django 4.x
+- **Backend:** Django 5.x
 - **Database:** SQLite (dev) → PostgreSQL (production)
-- **Frontend:** Django Templates + Bootstrap 5
+- **Frontend:** React.js
 - **Authentication:** Django built-in auth
 - **Deployment:** Railway or PythonAnywhere
 

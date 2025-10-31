@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import InputField from '../../components/InputField.jsx';
-import AxiosApi from '../../services/AxiosApi.jsx'
+import Api from '../../services/Api.jsx'
 import { useNavigate } from "react-router-dom";
 import Btn from '../../components/Btn.jsx';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants.js';
 
-// Auth Context
-import { useAuthContext } from "../../context/AuthContext.jsx";
 
 
 function Login() {
@@ -14,8 +13,7 @@ function Login() {
     password: '',
   });
 
-  const {token,setUserId,  setToken, setRefreshToken } = useAuthContext();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -29,13 +27,11 @@ function Login() {
     setLoading(true);
     setError(null);
     try {
-    
-      const res = await AxiosApi.post('account/login/', formData);
-      console.log("Login API response data:", res.data);
-      // In handleSubmit 
-      setToken(res.data.token);
-      setRefreshToken(res.data.refresh_token);
-      setUserId(res.data.user.id); // Add this
+
+      const res = await Api.post('/account/token/', formData);
+      // console.log(res.data);
+      localStorage.setItem(ACCESS_TOKEN, res.data.access)
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
       setSuccess(true);
       if (res.data.user.role === "Admin") {
         navigate('/admin/dashboard');
@@ -48,8 +44,8 @@ function Login() {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      const errorMsg = error.response ? 
-        error.response.data.message || "Login failed. Please try again." : 
+      const errorMsg = error.response ?
+        error.response.data.message || "Login failed. Please try again." :
         "Network error. Check your internet connection.";
       setError(errorMsg);
     } finally {
@@ -88,12 +84,12 @@ function Login() {
               />
             </div>
             <div className="flex items-baseline justify-between">
-            <Btn
-              type="submit"
-              text={loading ? 'Processing...' : 'Login'}
-              className="w-full mt-3 text-center"
-              disabled={loading}
-            />
+              <Btn
+                type="submit"
+                text={loading ? 'Processing...' : 'Login'}
+                className="w-full mt-3 text-center"
+                disabled={loading}
+              />
             </div>
           </div>
         </form>

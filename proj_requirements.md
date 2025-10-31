@@ -1,7 +1,3 @@
-**Excellent choice!** Agile is perfect for this project and it's exactly how real development teams work. Let me break down how we'll use Agile methodology for your School Management System.
-
----
-
 ## **AGILE FRAMEWORK FOR SCHOOL MANAGEMENT SYSTEM**
 
 **Think of Agile like this analogy:**

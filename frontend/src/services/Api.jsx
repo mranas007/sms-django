@@ -1,17 +1,18 @@
 import axios from "axios";
+import { ACCESS_TOKEN } from "../constants.js";
 
 
-const AxiosApi = axios.create({
-    baseURL: "http://127.0.0.1:8000/api/",
+const Api = axios.create({
+    baseURL: 'http://127.0.0.1:8000/api',
 })
 
-AxiosApi.interceptors.request.use((config) => {
-    const token = localStorage.getItem("ACCESS_TOKEN")
+Api.interceptors.request.use((config) => {
+    const token = localStorage.getItem(ACCESS_TOKEN)
     config.headers.Authorization = `Bearer ${token}`;
     return config
 })
 
-AxiosApi.interceptors.response.use(
+Api.interceptors.response.use(
     (response) => {
         return response
     },
@@ -21,9 +22,7 @@ AxiosApi.interceptors.response.use(
             // Check if the response status code is 401 (Unauthorized)
             if (response && response.status === 401) {
                 // Clear the token and user ID from localStorage
-                localStorage.removeItem("ACCESS_TOKEN");
-                localStorage.removeItem("REFRESH_TOKEN");
-                localStorage.removeItem("ACCESS_USER_ID");
+                localStorage.clear()
                 console.log("Unauthorized! Token removed.");
             }
         } catch (err) {
@@ -34,4 +33,4 @@ AxiosApi.interceptors.response.use(
     }
 )
 
-export default AxiosApi
+export default Api

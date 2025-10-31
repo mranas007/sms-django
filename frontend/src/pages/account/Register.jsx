@@ -2,7 +2,7 @@ import {React, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import InputField from '../../components/InputField';
 import Btn from '../../components/Btn';
-import AxiosApi from '../../services/AxiosApi.jsx'
+import Api from '../../services/Api.jsx'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -41,8 +41,8 @@ function Register() {
     setLoading(true);
 
     try {
-      const response = await AxiosApi.post(
-        'account/register/',
+      const response = await Api.post(
+        '/account/register/',
         formData,
         { headers: { 'Content-Type': 'application/json' } }
       );

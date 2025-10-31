@@ -9,9 +9,7 @@ function App() {
     <>
     <AuthProvider>
         <Navbar />
-        <main className="max-w-[1280px] mx-auto p-4  bg-gray-100">
           <Routers />
-        </main>
         <Footer />
     </AuthProvider>
     </>

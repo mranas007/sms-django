@@ -4,20 +4,21 @@ from rest_framework.permissions import AllowAny
 from .serializers import RegisterFormSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+from apps.activity_log.utils import log_activity
 
 User = get_user_model()
 
-""" custom token obtain """
-
-
+# custom token obtain pair view
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
-
-""" Register view """
-
-
-class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = RegisterFormSerializer
     permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            username = request.data.get('username')
+            user = User.objects.filter(username=username).first()
+            if user:
+                log_activity(user, 'User Login', f'User {user.username} successfully logged in.', content_object=user)
+        return response
+    

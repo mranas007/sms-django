@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ACCESS_TOKEN } from "../constants.js";
+import { ACCESS_TOKEN } from "../constant/TokensConstant.js";
 
 
 const Api = axios.create({
@@ -8,7 +8,9 @@ const Api = axios.create({
 
 Api.interceptors.request.use((config) => {
     const token = localStorage.getItem(ACCESS_TOKEN)
-    config.headers.Authorization = `Bearer ${token}`;
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config
 })
 
@@ -24,6 +26,7 @@ Api.interceptors.response.use(
                 // Clear the token and user ID from localStorage
                 localStorage.clear()
                 console.log("Unauthorized! Token removed.");
+                console.log(response.message);
             }
         } catch (err) {
             console.error("Error handling response interceptor:", err.message);

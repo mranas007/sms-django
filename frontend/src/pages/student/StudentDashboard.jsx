@@ -1,43 +1,82 @@
+// REACT HOOKS
 import React, { useState, useEffect } from "react";
-import Api from '../../services/Api.jsx'
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext.jsx";
 
-function StudentDashboard(){
-    const { token } = useAuthContext();
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+// SERVICES
+import Api from "../../services/Api.jsx";
 
-    useEffect(() => {
-      if (!token) {
+// COMPONENTS
+import {useAuthContext} from '../../context/AuthContext.jsx';
+
+
+
+function StudentDashboard() {
+  const {isAuthenticate}= useAuthContext()
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [students, setStudents] = useState([]);
+
+
+  useEffect(() => {
+
+    const checkAuth = async () => {
+      const isAuth = await isAuthenticate();
+      if (!isAuth) {
         navigate("/login");
       } else {
-        fetchData();
+        console.log("User is authenticated");
       }
-    }, [token, navigate]);
+    }
 
-    // fetch data from backend for student dashboard
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await Api.get('/student/dashboard/');
-        console.log(res.data);
+        const res = await Api.get("/student/dashboard/");
+        // console.log("Fetched data:", res.data);
+        setStudents(res.data); // assuming res.data is an array
       } catch (error) {
-        console.log("Something went wrong during student data fetch: ", error.message);
-        setError(error.response?.data?.message || "Failed to load dashboard data. Please try again.");
+        console.error("Error fetching student data:", error);
+        setError(
+          error.response?.data?.message ||
+            "Failed to load dashboard data. Please try again."
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    return(
-        <>
-        <h2 className="text-3xl font-bold mb-4">Welcome to the School Management System</h2>
-        <p className="text-lg">Manage students and more with ease.</p>
-      </>
-    )
+    fetchData();
+    checkAuth();
+  }, []);
+
+  if (loading) return <p>Loading student data...</p>;
+  if (error) return <p className="text-red-600">{error}</p>;
+
+  return (
+    <>
+      <h2 className="text-3xl font-bold mb-4">
+        Welcome to the School Management System
+      </h2>
+      <p className="text-lg mb-4">Manage students and more with ease.</p>
+
+      <div className="bg-white shadow p-4 rounded">
+        <h3 className="text-xl font-semibold mb-2">Student List</h3>
+        {students.length === 0 ? (
+          <p>No students found.</p>
+        ) : (
+          <ul className="list-disc ml-6">
+            {students.map((std) => (
+              <li key={std.id} className="mb-1">
+                <strong>{std.full_name || std.username}</strong> — {std.role}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
+  );
 }
 
-export default  StudentDashboard
+export default StudentDashboard;

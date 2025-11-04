@@ -1,77 +1,75 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { ACCESS_TOKEN } from '../constant/TokensConstant.js';
+import { useAuthContext } from '../context/AuthContext.jsx';
 
-// Auth Context
-import { useAuthContext } from "../context/AuthContext.jsx";
 
 function Navbar() {
+    const {isAuthenticate, logout}= useAuthContext()
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const { token} = useAuthContext();
 
     useEffect(() => {
-        // Replace with your actual auth check logic
-        // const token = localStorage.getItem('token');
-        setIsLoggedIn(!token);
-    }, []);
+        const checkAuth = async () => {
+        const isAuth = await isAuthenticate();
+            if (!isAuth) {
+                setIsLoggedIn(false);
+            } else {
+                setIsLoggedIn(true);
+            }
+        };
+        checkAuth();
+     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-    };
 
     return (
-        <nav className="max-w-[1280px] mx-auto bg-blue-600 p-4 text-white shadow-lg">
+        <nav className="max-w-[1280px] mx-auto bg-indigo-600 p-4 text-white shadow-lg">
             <div className="container mx-auto flex justify-between items-center">
-                <Link to="/" className="text-2xl font-bold hover:text-blue-200 transition-colors">
-                    Django-SMS
+                <Link to="/" className="text-2xl font-bold hover:text-indigo-200 transition-colors duration-300">
+                    Django SMS
                 </Link>
-                
+
                 <ul className="flex space-x-6">
                     <li>
-                        <Link to="/" className="hover:text-blue-200 transition-colors">
+                        <Link to="/" className="hover:text-indigo-200 transition-colors duration-300">
                             Home
                         </Link>
                     </li>
                     <li>
-                        <Link to="/about" className="hover:text-blue-200 transition-colors">
+                        <Link to="/about" className="hover:text-indigo-200 transition-colors duration-300">
                             About Us
                         </Link>
                     </li>
                     <li>
-                        <Link to="/contact" className="hover:text-blue-200 transition-colors">
+                        <Link to="/contact" className="hover:text-indigo-200 transition-colors duration-300">
                             Contact
                         </Link>
                     </li>
                 </ul>
 
                 <ul className="flex space-x-4">
-                    {isLoggedIn ?  (
+                    {isLoggedIn ? (
                         <>
                             <li>
-                                <Link to="/login" className="hover:text-blue-200 transition-colors">
-                                    Login
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/register" className="hover:text-blue-200 transition-colors">
-                                    Register
-                                </Link>
-                            </li>
-                        </>
-                    ): (
-                        <>
-                            <li>
-                                <Link to="/profile" className="hover:text-blue-200 transition-colors">
+                                <Link to="/profile" className="hover:text-indigo-200 transition-colors duration-300">
                                     Profile
                                 </Link>
                             </li>
                             <li>
-                                <button 
-                                    onClick={handleLogout}
-                                    className="hover:text-blue-200 transition-colors"
+                                <button
+                                    onClick={logout}
+                                    className="hover:text-indigo-200 transition-colors duration-300"
                                 >
                                     Logout
                                 </button>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li>
+                                <Link to="/login" className="hover:text-indigo-200 transition-colors duration-300">
+                                    Login
+                                </Link>
                             </li>
                         </>
                     )}

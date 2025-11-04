@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import InputField from '../../components/InputField.jsx';
-import Api from '../../services/Api.jsx'
+// REACT HOOKS
+import { React, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+
+// SERVICES
+import Api from '../../services/Api.jsx'
+
+// CUSTOME CONTEXT
+import { useAuthContext } from '../../context/AuthContext.jsx';
+
+// COMPONENTS
+import ErrorMsg from '../../components/ErrorMsg.jsx';
 import Btn from '../../components/Btn.jsx';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants.js';
+import InputField from '../../components/InputField.jsx';
 
 
 
@@ -13,6 +21,7 @@ function Login() {
     password: '',
   });
 
+  const { setAccessToken, setRefreshToken } = useAuthContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,20 +37,26 @@ function Login() {
     setError(null);
     try {
 
-      const res = await Api.post('/account/token/', formData);
-      // console.log(res.data);
-      localStorage.setItem(ACCESS_TOKEN, res.data.access)
-      localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+      const res = await Api.post('/account/login/', formData);    
+      setAccessToken(res.data.access)
+      setRefreshToken(res.data.refresh)
       setSuccess(true);
-      if (res.data.user.role === "Admin") {
-        navigate('/admin/dashboard');
-      } else if (res.data.user.role === "Teacher") {
-        navigate('/teacher/dashboard');
-      } else if (res.data.user.role === "Student") {
-        navigate('/student/dashboard');
-      } else {
-        navigate('/home');
+      
+      switch(res.data.user.role){
+        case "Student":
+          navigate('/student/dashboard');
+          break;
+          case "Teacher":
+            navigate('/teacher/dashboard');
+            break;
+        case "Admin":
+          navigate('/admin/dashboard');
+          break;
+        default:
+          navigate('/home');
+          break;
       }
+
     } catch (error) {
       console.error("Login failed:", error);
       const errorMsg = error.response ?
@@ -54,10 +69,10 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="px-8 py-6 sm:w-[390px] bg-white shadow-lg rounded-lg">
-        <h3 className="text-2xl font-bold text-center">Login to your account</h3>
-        {error && <p className="text-red-600 text-center mt-2">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="px-8 py-6 sm:w-[390px] bg-white shadow-lg rounded-lg border border-gray-200">
+        <h3 className="text-2xl font-bold text-center text-indigo-700">Login to your account</h3>
+        {error && <ErrorMsg error={error} /> }
         {success && <p className="text-green-600 text-center mt-2">Login successful!</p>}
         <form onSubmit={handleSubmit}>
           <div className="mt-4">
@@ -87,7 +102,7 @@ function Login() {
               <Btn
                 type="submit"
                 text={loading ? 'Processing...' : 'Login'}
-                className="w-full mt-3 text-center"
+                className="w-full mt-3 text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 disabled={loading}
               />
             </div>

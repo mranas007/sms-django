@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { FaUserPlus } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-// Assuming Api service is available at this path
-import Api from '../../services/Api'; // Adjust path if necessary
+import React, { useState, useEffect } from 'react';
+import { FaUserEdit } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
+import CircleLoader from '../../components/CircleLoader';
+import ErrorMsg from '../../components/ErrorMsg';
+import Api from '../../services/Api.jsx';
 
-export default function AddUser() {
+
+export default function UpdateUser() {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     full_name: '',
@@ -12,24 +16,46 @@ export default function AddUser() {
     address: '',
     bio: '',
     birth_date: '',
-    role: 'Student', // Default role
-    password: '',
-    cpassword: '',
-    profile_picture: null,
-    email: '', // Add email field
+    role: '',
+    email: '',
+    is_active: true,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await Api.get(`/admin/user/${id}/`);;
+        setFormData({
+          username: response.data.username || '',
+          full_name: response.data.full_name || '',
+          phone_number: response.data.phone_number || '',
+          address: response.data.address || '',
+          bio: response.data.bio || '',
+          birth_date: response.data.birth_date || '',
+          role: response.data.role || '',
+          email: response.data.email || '',
+          is_active: response.data.is_active,
+        });
+      } catch (err) {
+        setError('Failed to fetch user details.');
+        console.error('Error fetching user details:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, [id]);
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'file' ? files[0] : value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -37,50 +63,35 @@ export default function AddUser() {
     e.preventDefault();
     setError(null);
     setSuccess(false);
-
-    if (formData.password !== formData.cpassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const response = await Api.post(
-        '/admin/users/', // Assuming this is the correct endpoint for adding users
-        formData,
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      if (response.status === 200 || response.status === 201) {
+       
+      const response = await Api.put(`/admin/user/${id}/`, formData);
+      if (response.status === 200) {
         setSuccess(true);
-        console.log('User added successfully:', response.data);
-        // Optionally reset form or redirect
-        setFormData({
-          username: '',
-          full_name: '',
-          phone_number: '',
-          address: '',
-          bio: '',
-          birth_date: '',
-          role: 'Student',
-          password: '',
-          cpassword: '',
-          profile_picture: null,
-          email: '', // Reset email field
-        });
+        console.log('User updated successfully:', response.data);
       }
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Failed to add user.';
+      const msg = err.response?.data?.message || err.message || 'Failed to update user.';
       setError(msg);
-      console.error('Add user error:', msg);
+      console.error('Update user error:', msg);
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading) {
+    return <CircleLoader />;
+  }
+
+  if (error && !formData.username) {
+    return <ErrorMsg message={error} />;
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Add New User</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Update User</h1>
      
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
         {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -89,7 +100,7 @@ export default function AddUser() {
         </div>}
         {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
           <strong className="font-bold">Success!</strong>
-          <span className="block sm:inline"> User added successfully!</span>
+          <span className="block sm:inline"> User updated successfully!</span>
         </div>}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
@@ -173,29 +184,23 @@ export default function AddUser() {
             </select>
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="cpassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
-            <input
-              type="password"
-              id="cpassword"
-              name="cpassword"
-              value={formData.cpassword}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-          </div>
+            <label htmlFor="is_active" className="block text-sm font-medium text-gray-700 mb-1">
+                Account Status
+            </label>
+            <div className="mt-1 flex items-center h-[42px] px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50">
+                <input
+                type="checkbox"
+                id="is_active"
+                name="is_active"
+                checked={formData.is_active}
+                onChange={handleChange}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                <label htmlFor="is_active" className="ml-3 text-sm text-gray-700">
+                {formData.is_active ? 'Active' : 'Inactive'}
+                </label>
+            </div>
+            </div>
         </div>
         <div className="mb-6">
           <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
@@ -208,20 +213,10 @@ export default function AddUser() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           ></textarea>
         </div>
-        <div className="mb-6">
-          <label htmlFor="profile_picture" className="block text-sm font-medium text-gray-700">Profile Picture</label>
-          <input
-            type="file"
-            id="profile_picture"
-            name="profile_picture"
-            onChange={handleChange}
-            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-          />
-        </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <button
                 type="button"
-                onClick={() => window.history.back()}
+                onClick={() => navigate(-1)}
                 className="me-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Cancel
           </button>
@@ -230,8 +225,8 @@ export default function AddUser() {
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             disabled={loading}
           >
-            <FaUserPlus className="-ml-1 mr-2 h-5 w-5" />
-            {loading ? 'Adding User...' : 'Add User'}
+            <FaUserEdit className="-ml-1 mr-2 h-5 w-5" />
+            {loading ? 'Updating User...' : 'Update User'}
           </button>
         </div>
       </form>

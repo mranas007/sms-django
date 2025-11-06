@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem(REFRESH_TOKEN));
   const [checkAuthenticate, setCheckAuthenticate] = useState(null);
 
-  // ✅ Convert to boolean properly
+  // Convert to boolean properly
   const isAuthenticate = async () => {
     try {
       if (!accessToken) return false;
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     setCheckAuthenticate(false);
   };
 
-  // ✅ Always run once on mount
+  // Always run once on mount
   useEffect(() => {
     (async () => {
       const authenticated = await isAuthenticate();
@@ -91,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         refreshToken,
         setRefreshToken: updateRefreshToken,
         logout,
+        checkAuthenticate, // Expose checkAuthenticate
       }}
     >
       {children}

@@ -23,10 +23,7 @@ Api.interceptors.response.use(
             const { response } = error;
             // Check if the response status code is 401 (Unauthorized)
             if (response && response.status === 401) {
-                // Clear the token and user ID from localStorage
                 localStorage.clear()
-                console.log("Unauthorized! Token removed.");
-                console.log(response.message);
             }
         } catch (err) {
             console.error("Error handling response interceptor:", err.message);
@@ -36,4 +33,4 @@ Api.interceptors.response.use(
     }
 )
 
-export default Api
+export default Api;

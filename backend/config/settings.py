@@ -13,13 +13,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False')
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.188.231.7"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "192.168.100.147",
+    "172.30.240.1",
+    "172.26.176.1"
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://10.188.231.7:5173"
+    "http://192.168.100.147:5173",
+    "http://172.30.240.1:5173",
+    "http://172.26.176.1:5173"
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 
 # Custom user model
@@ -35,7 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
-    # my apps
+    # MY APPS
     "apps.accounts",
     "apps.student",
     "apps.teacher",
@@ -43,7 +52,7 @@ INSTALLED_APPS = [
     "apps.activity_log",
     "apps.admin_panel",
 
-    # thrid party apps
+    # thrid 
     "rest_framework",
     "corsheaders",
 ]
@@ -82,14 +91,20 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DATABASE_NAME'),
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         'HOST': os.getenv('DATABASE_HOST'),
+#         'PORT': os.getenv('DATABASE_PORT'),
+#     }
+# }
 
 
 # Password validation
@@ -157,3 +172,4 @@ CELERY_TIMEZONE = TIME_ZONE
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# APPEND_SLASH = False

@@ -1,10 +1,11 @@
 // REACT HOOKS
 import React, { useState, useEffect, useCallback } from 'react';
 import { FaSearch, FaEdit, FaTrash, FaUserPlus, FaUserSlash } from 'react-icons/fa';
-
+import {Link} from 'react-router-dom'
 import Api from '../../services/Api';
 import CircleLoader from '../../components/CircleLoader';
 import FailedCom from '../../components/FailedCom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const ConfirmationModal = ({ message, onConfirm, onCancel }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -26,12 +27,18 @@ export default function Users() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [modal, setModal] = useState({ isOpen: false, message: '', onConfirm: null });
+  
+  const [searchParams] = useSearchParams();
+  const role = searchParams.get('role');
 
-  const getUsers = useCallback(async (page = 1, search = '') => {
+
+  const getUsers = useCallback(async (page = 1, search = '', roleParam = '') => {
     try {
       setLoading(true);
       setError(null);
-      const res = await Api.get(`admin/getallusers/?page=${page}&search=${search}`);
+      const roleQuery = roleParam ? `&role=${roleParam}` : '';
+      const res = await Api.get(`admin/users/?page=${page}&search=${search}${roleQuery}`);
+      // console.log(res.data.results);
       setUsers(res.data.results || []);
       setTotalPages(Math.ceil(res.data.count / 10));
       setCurrentPage(page);
@@ -45,16 +52,16 @@ export default function Users() {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      getUsers(1, searchQuery);
+      getUsers(1, searchQuery, role);
     }, 300); // Debounce search
-
     return () => clearTimeout(handler);
-  }, [searchQuery, getUsers]);
+  }, [searchQuery, getUsers, role]);
 
-  const handleAction = async (userId, action) => {
+  // DELETE ACTION
+  const deleteAction = async (userId, action) => {
     const performAction = async () => {
       try {
-        await Api.post(`/user/${action}/${userId}/`);
+        await Api.delete(`admin/user/${userId}/`);
         alert(`User ${action} successful`);
         getUsers(currentPage, searchQuery);
       } catch (err) {
@@ -83,7 +90,7 @@ export default function Users() {
   return (
     <>
       {modal.isOpen && <ConfirmationModal message={modal.message} onConfirm={modal.onConfirm} onCancel={closeModal} />}
-      <div className="min-h-screen bg-gray-100 p-4 sm:p-6" style={{ margin: '50px 0' }}>
+      <div className="min-h-screen bg-gray-100 p-8 sm:p-6" style={{ margin: '50px 0' }}>
         <div className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">User Management</h1>
@@ -129,6 +136,19 @@ export default function Users() {
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center gap-2">
+                          {/* Info */}
+                          <button
+                            onClick={() => window.open(`/admin/user/${user.id}`, '_blank')}
+                            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            aria-label="View user details">
+                            <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                              Info
+                            </span>
+                          </button>
+
                           {/* Activate / Deactivate */}
                           <button
                             onClick={() => handleAction(user.id, user.is_active ? 'deactivate' : 'activate')}
@@ -143,19 +163,18 @@ export default function Users() {
                           </button>
 
                           {/* Edit */}
-                          <button
-                            onClick={() => handleAction(user.id, 'edit')}
+                          <Link to={`/admin/users/${user.id}/update`}
                             className="group relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             aria-label="Edit user" >
                             <FaEdit className="w-4 h-4 text-blue-600" />
                             <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                               Edit
                             </span>
-                          </button>
+                          </Link>
 
                           {/* Delete */}
                           <button
-                            onClick={() => handleAction(user.id, 'delete')}
+                            onClick={() => deleteAction(user.id)}
                             className="group relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-red-50 hover:ring-2 hover:ring-red-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             aria-label="Delete user" >
                             <FaTrash className="w-4 h-4 text-red-600" />

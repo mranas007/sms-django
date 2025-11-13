@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate , useParams } from 'react-router-dom';
 import {
   FaArrowLeft,
   FaInfo,
@@ -17,13 +17,16 @@ import {
 import CircleLoader from '../../../components/CircleLoader.jsx';
 import ErrorMsg from '../../../components/ErrorMsg.jsx';
 import Api from '../../../services/Api.jsx';
+import DeleteConfirmation from '../../../components/DeleteConfirmation.jsx';
+import BackBtn from '../../../components/BackBtn'
+
 
 export default function ClassDetail() {
   const { id } = useParams(); // Get class ID from URL
   const [classData, setClassData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchClassDetail();
   }, [id]);
@@ -41,19 +44,8 @@ export default function ClassDetail() {
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this class?')) {
-      try {
-       const res = await classService.deleteClass(id);
-       if (res.status === 204) {
-         window.location.href = '/admin/classes';
-         // Successfully deleted
-       }
-      } catch (err) {
-        setError('Failed to delete class.');
-        console.error('Error deleting class:', err);
-      }
-    }
+  const isDeleteSuccess = async () => {
+    navigate('/admin/classes');
   };
 
   if (loading) {
@@ -69,9 +61,7 @@ export default function ClassDetail() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-500 text-lg mb-4">Class not found</p>
-          <Link to="/admin/classes" className="text-indigo-600 hover:text-indigo-800">
-            Go back to class list
-          </Link>
+          <BackBtn />
         </div>
       </div>
     );
@@ -82,12 +72,7 @@ export default function ClassDetail() {
       <div className="max-w-7xl mx-auto">
         {/* Header with Back Button */}
         <div className="mb-6">
-          <Link
-            to="/admin/classes"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
-          >
-            <FaArrowLeft /> Back to Classes
-          </Link>
+        <BackBtn />
         </div>
 
         {/* Class Header Card */}
@@ -107,18 +92,12 @@ export default function ClassDetail() {
               </div>
             </div>
             <div className="flex gap-3">
+              <DeleteConfirmation deleteUrl={`/admin/class/${classData.id}/`} onDeleteSuccess={isDeleteSuccess}/>
               <Link
                 to={`/admin/class/edit/${classData.id}`}
-                className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 p-3 rounded-lg transition flex items-center gap-2"
-              >
+                className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 p-3 rounded-lg transition flex items-center gap-2">
                 <FaEdit /> Edit
               </Link>
-              <button
-                onClick={handleDelete}
-                className="bg-red-500 bg-opacity-80 hover:bg-opacity-100 p-3 rounded-lg transition flex items-center gap-2"
-              >
-                <FaTrash /> Delete
-              </button>
             </div>
           </div>
         </div>

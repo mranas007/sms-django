@@ -5,6 +5,8 @@ import Api from '../../../services/Api.jsx';
 import CircleLoader from '../../../components/CircleLoader.jsx';
 import ErrorMsg from '../../../components/ErrorMsg.jsx';
 import BackBtn from '../../../components/BackBtn'
+import DeleteConfirmation from '../../../components/DeleteConfirmation.jsx';
+
 
 
 export default function ClassList() {
@@ -29,24 +31,17 @@ export default function ClassList() {
       setLoading(false);
     }
   };
-
-  const handleDelete = async (classId) => {
-    if (window.confirm('Are you sure you want to delete this class?')) {
-      try {
-        await Api.delete(`/admin/class/${classId}/`);
-        setClasses(classes.filter((cls) => cls.id !== classId));
-      } catch (err) {
-        setError('Failed to delete class.');
-        console.error('Error deleting class:', err);
-      }
-    }
-  };
+ 
 
   const filteredClasses = Array.isArray(classes) ? classes.filter(
     (cls) =>
       cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cls.academic_year.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
+  
+  const isDeleteSuccess = async () => {
+    fetchClasses();
+  };
 
   if (loading) {
     return <CircleLoader />;
@@ -165,15 +160,7 @@ export default function ClassList() {
                       >
                         <FaInfo />
                       </Link>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(cls.id);
-                        }}
-                        className="bg-white bg-opacity-20 text-red-600 hover:bg-opacity-30 p-2 rounded-lg transition"
-                      >
-                        <FaTrash />
-                      </button>
+                      <DeleteConfirmation deleteUrl={`/admin/class/${cls.id}/`} onDeleteSuccess={isDeleteSuccess}/>
                     </div>
                   </div>
                 </div>

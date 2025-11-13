@@ -97,8 +97,8 @@ export default function Users() {
   return (
     <>
       {modal.isOpen && <ConfirmationModal message={modal.message} onConfirm={modal.onConfirm} onCancel={closeModal} />}
-      <div className="min-h-screen bg-gray-100 p-8 sm:p-6" style={{ margin: '50px 0 0 0' }}>
-        <div className="w-full mt-20">
+      <div className="min-h-screen bg-gray-100 p-8 sm:p-6 mt-10">
+        <div className="w-full">
           <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
             <BackBtn />

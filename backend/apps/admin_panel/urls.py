@@ -4,6 +4,7 @@ from .views.dashboard_views import Dashboard
 from .views.user_views import UserCR, UserRUD
 from .views.subject_views import SubjectCR, SubjectRUD
 from .views.class_views import ClassCR, ClassRUD
+from .views.user_activities_view import UserActivitiesR
 
 
 
@@ -22,5 +23,8 @@ urlpatterns = [
     # Class
     path('classes/', ClassCR.as_view(), name='classes'),  # Read all, Create | filter: Name
     path('class/<str:pk>/', ClassRUD.as_view(), name='class'),  # Read one, Update, Delete
+
+    path('activities/', UserActivitiesR.as_view(), name='classes'),  # Read all, Create | filter: Name
+    # path('activities/<str:pk>/', UserActivitiesView.as_view(), name='class'),  # Read one, Update, Delete
 
 ]

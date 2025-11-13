@@ -116,58 +116,10 @@ export default function AdminDashboard() {
 
   return (
       <div className="container mx-auto p-8">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Admin Dashboard</h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Card 1: Total Users */}
-          <Link to={'/admin/users'} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Total Users</h2>
-              <p className="text-3xl font-bold text-indigo-600">{stats.total_users}</p>
-            </div>
-            <FaUsers className="text-indigo-400 text-5xl" />
-          </Link>
-
-          {/* Card 2: Total Students */}
-          <Link to={`/admin/users/?role=${STUDENT}`}  className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Total Student</h2>
-              <p className="text-3xl font-bold text-green-600">{stats.total_students}</p>
-            </div>
-            <FaUsers className="text-green-400 text-5xl" />
-          </Link>
-
-          {/* Card 2: Total Classes */}
-          <Link to={`/admin/classes`} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Total Classes</h2>
-              <p className="text-3xl font-bold text-green-600">{stats.total_classes}</p>
-            </div>
-            <FaGraduationCap className="text-green-400 text-5xl" />
-          </Link>
-
-          {/* Card 3: Total Subjects */}
-          <Link to={'/admin/subjects'} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Total Subjects</h2>
-              <p className="text-3xl font-bold text-yellow-600">{stats.total_subjects}</p>
-            </div>
-            <FaBook className="text-yellow-400 text-5xl" />
-          </Link>
-
-          {/* Card 4: Total Teachers */}
-          <Link to={`/admin/users/?role=${TEACHER}`}  className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Total Teachers</h2>
-              <p className="text-3xl font-bold text-red-600">{stats.total_teachers}</p>
-            </div>
-            <FaChalkboardTeacher className="text-red-400 text-5xl" />
-          </Link>
-        </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Quick Actions</h2>
+        <div className="mb-8">  
+          {/* <h2 className="text-2xl font-bold mb-4 text-gray-800">Quick Actions</h2> */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link
               to={"/admin/add/class"}
@@ -189,9 +141,64 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Card 1: Total Users */}
+          <Link to={'/admin/users'} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Total Users</h2>
+              <p className="text-3xl font-bold text-indigo-600">{stats.total_users}</p>
+            </div>
+            <FaUsers className="text-indigo-400 text-5xl" />
+          </Link>
+
+          {/* Card 2: Total Students */}
+          <Link to={`/admin/users/?role=${STUDENT}`}  className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Total Student</h2>
+              <p className="text-3xl font-bold text-green-600">{stats.total_students}</p>
+            </div>
+            <FaUsers className="text-green-400 text-5xl" />
+          </Link>
+
+          {/* Card 3: Total Teachers */}
+          <Link to={`/admin/users/?role=${TEACHER}`}  className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Total Teachers</h2>
+              <p className="text-3xl font-bold text-red-600">{stats.total_teachers}</p>
+            </div>
+            <FaChalkboardTeacher className="text-red-400 text-5xl" />
+          </Link>
+
+          {/* Card 4: Total Classes */}
+          <Link to={`/admin/classes`} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Total Classes</h2>
+              <p className="text-3xl font-bold text-green-600">{stats.total_classes}</p>
+            </div>
+            <FaGraduationCap className="text-green-400 text-5xl" />
+          </Link>
+
+          {/* Card 5: Total Subjects */}
+          <Link to={'/admin/subjects'} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Total Subjects</h2>
+              <p className="text-3xl font-bold text-yellow-600">{stats.total_subjects}</p>
+            </div>
+            <FaBook className="text-yellow-400 text-5xl" />
+          </Link>
+
+          
+        </div>
+
+        
+
         {/* Recent Activities / Notifications (Placeholder) */}
           <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Recent Activities</h2>
+            <div className='flex items-center justify-between mb-5'>
+              <h2 className="text-2xl font-bold text-gray-800">Recent Activities</h2>
+              <Link to='/admin/activities' className='p-3 rounded bg-indigo-600 hover:bg-indigo-700 transition-all  text-white'>See All Activities</Link>
+            </div>
             <ul>
               {stats.recent_activities && stats.recent_activities.map((activity) => (
                 <li key={activity.id} className="border-b border-gray-200 py-2">

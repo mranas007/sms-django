@@ -37,8 +37,7 @@ class ClassCreateSerializer(ModelSerializer):
 
     class Meta:
         model = Class
-        fields = ('id', 'name', 'subjects', 'teachers', 'students', 'academic_year', 'schedule')
-        read_only_fields = ('id')
+        fields = ('name', 'subjects', 'teachers', 'students', 'academic_year', 'schedule')
 
     def create(self, validated_data):
         subjects_data = validated_data.pop('subjects', [])

@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.generics import get_object_or_404
+from rest_framework import status
 
 from apps.core.models import Class
 from apps.activity_log.utils import log_activity
@@ -21,7 +22,7 @@ class ClassCR(APIView):
         return Class.objects.all()
 
     def get(self, request, *args, **kwargs):
-        classes = self.get_queryset()
+        classes = self.get_queryset().order_by('-timestamp')
         pagination = self.pagination_class()
         paginated_classes = pagination.paginate_queryset(classes, request)
         serializer = ClassListSerializer(paginated_classes, many=True)
@@ -32,7 +33,7 @@ class ClassCR(APIView):
         serializer.is_valid(raise_exception=True)
         class_instance = serializer.save()
         log_activity(self.request.user, 'Class Creation', f'Class {class_instance.name} was created by Admin.', content_object=class_instance)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # Class: Read one, Update, Delete
@@ -54,8 +55,8 @@ class ClassRUD(APIView):
 
     def delete(self, request, pk, *args, **kwargs):
         class_instance = get_object_or_404(Class, pk=pk)
-        class_instance.delete()
         log_activity(self.request.user, 'Class Deletion', f'Class {class_instance.name} was deleted by Admin.', content_object=class_instance)
-        return Response({'message': 'Class deleted successfully'})
+        class_instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 

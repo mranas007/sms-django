@@ -20,3 +20,7 @@ class Class(models.Model):
     students = models.ManyToManyField(User, blank=True, related_name='classes_as_student')
     academic_year = models.CharField(max_length=9)  # e.g., "2024-2025"
     schedule = models.CharField(max_length=100)  # e.g., "Mon/Wed 10:00-11:00"
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']

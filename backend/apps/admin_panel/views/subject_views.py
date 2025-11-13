@@ -1,7 +1,7 @@
 from rest_framework import generics
 from apps.admin_panel.permissions import IsAdmin
 from apps.core.models import Subject
-from apps.admin_panel.serializers import SubjectCreateListSerializer
+from apps.admin_panel.serializers.subject_serializers import SubjectCreateListSerializer
 from apps.activity_log.utils import log_activity
 
 

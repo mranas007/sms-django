@@ -138,22 +138,22 @@ export default function AdminDashboard() {
           </Link>
 
           {/* Card 2: Total Classes */}
-          <div className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+          <Link to={`/admin/classes`} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-gray-700">Total Classes</h2>
               <p className="text-3xl font-bold text-green-600">{stats.total_classes}</p>
             </div>
             <FaGraduationCap className="text-green-400 text-5xl" />
-          </div>
+          </Link>
 
           {/* Card 3: Total Subjects */}
-          <div className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+          <Link to={'/admin/subjects'} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-gray-700">Total Subjects</h2>
               <p className="text-3xl font-bold text-yellow-600">{stats.total_subjects}</p>
             </div>
             <FaBook className="text-yellow-400 text-5xl" />
-          </div>
+          </Link>
 
           {/* Card 4: Total Teachers */}
           <Link to={`/admin/users/?role=${TEACHER}`}  className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Api from '../../services/Api.jsx';
-import CircleLoader from '../../components/CircleLoader.jsx';
-import ErrorMsg from '../../components/ErrorMsg.jsx';
+import Api from '../../../services/Api.jsx';
+import CircleLoader from '../../../components/CircleLoader.jsx';
+import ErrorMsg from '../../../components/ErrorMsg.jsx';
 import { Link } from 'react-router-dom';
 
 export default function UserDetails() {

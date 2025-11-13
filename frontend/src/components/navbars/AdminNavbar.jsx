@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext.jsx";
+import { useAuthContext } from "../../context/AuthContext.jsx";
 import { FaUserCircle, FaBars, FaTimes, FaTachometerAlt, FaUsers, FaCog, FaSignOutAlt, FaChalkboardTeacher, FaBook, FaGraduationCap } from 'react-icons/fa';
 
 export default function AdminNavbar() {
@@ -30,14 +30,14 @@ export default function AdminNavbar() {
         <button onClick={toggleSidebar} className="text-gray-700 focus:outline-none">
           <FaBars className="h-6 w-6" />
         </button>
-        <h1 className="text-2xl font-bold text-blue-800 md:ml-0 ml-4">Admin Dashboard</h1>
+        <h1 className="text-2xl font-bold text-indigo-600 md:ml-0 ml-4">Admin Dashboard</h1>
         <div className="flex items-center space-x-4">
           <span className="text-gray-600 font-medium flex items-center">
             <FaUserCircle className="mr-2 text-xl" /> Admin
           </span>
           <button
             onClick={handleLogout}
-            className="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition hidden md:block"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition hidden md:block"
           >
             Logout
           </button>
@@ -66,7 +66,7 @@ export default function AdminNavbar() {
                 }}
                 className={`flex items-center py-2 px-4 rounded w-full text-left ${
                   isActive("/admin/dashboard")
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-indigo-600 text-white'
                     : 'hover:bg-gray-700'
                 }`}
               >
@@ -81,7 +81,7 @@ export default function AdminNavbar() {
                 }}
                 className={`flex items-center py-2 px-4 rounded w-full text-left ${
                   isActive("/admin/users")
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-indigo-600 text-white'
                     : 'hover:bg-gray-700'
                 }`}
               >
@@ -96,7 +96,7 @@ export default function AdminNavbar() {
                 }}
                 className={`flex items-center py-2 px-4 rounded w-full text-left ${
                   isActive("/admin/classes")
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-indigo-600 text-white'
                     : 'hover:bg-gray-700'
                 }`}
               >
@@ -111,28 +111,14 @@ export default function AdminNavbar() {
                 }}
                 className={`flex items-center py-2 px-4 rounded w-full text-left ${
                   isActive("/admin/subjects")
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-indigo-600 text-white'
                     : 'hover:bg-gray-700'
                 }`}
               >
                 <FaBook className="mr-3" /> Subjects
               </button>
             </li>
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  navigate("/admin/teachers");
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center py-2 px-4 rounded w-full text-left ${
-                  isActive("/admin/teachers")
-                    ? 'bg-blue-600 text-white'
-                    : 'hover:bg-gray-700'
-                }`}
-              >
-                <FaChalkboardTeacher className="mr-3" /> Teachers
-              </button>
-            </li>
+           
             <li className="mb-2">
               <button
                 onClick={() => {
@@ -141,7 +127,7 @@ export default function AdminNavbar() {
                 }}
                 className={`flex items-center py-2 px-4 rounded w-full text-left ${
                   isActive("/admin/settings")
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-indigo-600 text-white'
                     : 'hover:bg-gray-700'
                 }`}
               >

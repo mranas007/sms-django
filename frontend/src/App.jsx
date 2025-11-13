@@ -20,11 +20,11 @@ import { ProtectedRouter } from './utils/ProtectedRouter.jsx';
 
 
 // COMPONENTS
-import AdminNavbar from './components/AdminNavbar.jsx';
-import TeacherNavbar from './components/TeacherNavbar.jsx';
-import StudentNavbar from './components/StudentNavbar.jsx';
-import Navbar from './components/Navbar.jsx';
-import Layout from './components/Layout.jsx';
+import AdminNavbar from './components/navbars/AdminNavbar.jsx';
+import TeacherNavbar from './components/navbars/TeacherNavbar.jsx';
+import StudentNavbar from './components/navbars/StudentNavbar.jsx';
+import Navbar from './components/navbars/Navbar.jsx';
+import Layout from './layouts/Layout.jsx';
 
 
 // PAGES
@@ -34,14 +34,18 @@ import Home from './pages/guest/Home.jsx';
 import About from './pages/guest/About.jsx';
 import Contact from './pages/guest/Contact.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
-import AddClass from './pages/admin/AddClass.jsx';
-import Users from './pages/admin/Users.jsx';
-import UserDetails from './pages/admin/UserDetails.jsx';
-import AddUser from './pages/admin/AddUser.jsx';
-import UpdateUser from './pages/admin/UpdateUser.jsx';
-import ClassList from './pages/admin/ClassList.jsx';
 import StudentDashboard from './pages/student/StudentDashboard.jsx';
 import TeacherDashboard from './pages/teacher/TeacherDashboard.jsx';
+
+import Users from './pages/admin/users/Users.jsx';
+import UserDetails from './pages/admin/users/UserDetails.jsx';
+import AddUser from './pages/admin/users/AddUser.jsx';
+import UpdateUser from './pages/admin/users/UpdateUser.jsx';
+
+import ClassDetail from './pages/admin/classes/ClassDetail.jsx';
+import AddClass from './pages/admin/classes/AddClass.jsx';
+import ClassList from './pages/admin/classes/ClassList.jsx';
+import Subjects from './pages/admin/subjects/Subjects.jsx';
 
 
 // RETURN NAVBAR COMPONENT BASED ON USER ROLE
@@ -83,10 +87,12 @@ function App() {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/add/class" element={<AddClass />} />
               <Route path="/admin/classes" element={<ClassList />} />
+              <Route path="/admin/class/detail/:id" element={<ClassDetail />} />
               <Route path="/admin/users" element={<Users />} />
               <Route path="/admin/user/add" element={<AddUser />} />
               <Route path="/admin/users/:role/:id" element={<UserDetails />} />
               <Route path="/admin/users/:id/update" element={<UpdateUser />} />
+              <Route path="/admin/subjects" element={<Subjects />} />
               {/* <Route path="*" element={<NotFound />} />
             </Routes> */}
           {/* </ProtectedRouter>} /> */}

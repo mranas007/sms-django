@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserEdit } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
-import CircleLoader from '../../components/CircleLoader';
-import ErrorMsg from '../../components/ErrorMsg';
-import Api from '../../services/Api.jsx';
+import CircleLoader from '../../../components/CircleLoader';
+import ErrorMsg from '../../../components/ErrorMsg';
+import Api from '../../../services/Api.jsx';
 
 
 export default function UpdateUser() {

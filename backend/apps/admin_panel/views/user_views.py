@@ -1,20 +1,27 @@
 from django.db.models import Q
 
 from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from apps.activity_log.utils import log_activity
 from apps.admin_panel.pagination import UserPagination
 from apps.admin_panel.permissions import IsAdmin
 from apps.accounts.models import User
-from apps.admin_panel.serializers import UserSerializer
+from apps.admin_panel.serializers.user_serializers import UserListSerializer, UserCreateSerializer, UserUpdateSerializer
 
 
 
 # USER: Read all, Create
 class UserCR(generics.ListAPIView,generics.CreateAPIView):
     permission_classes = [IsAdmin]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserListSerializer
+        return UserCreateSerializer
+
     pagination_class = UserPagination
 
     def get_queryset(self):
@@ -25,7 +32,7 @@ class UserCR(generics.ListAPIView,generics.CreateAPIView):
             print(role)
             queryset = queryset.filter(role=role)
         if search:
-            queryset = queryset.filter(Q(username__icontains=search) | Q(emil__icontains=search))
+            queryset = queryset.filter(Q(username__icontains=search) | Q(email__icontains=search))
         
         return queryset 
 
@@ -38,8 +45,13 @@ class UserCR(generics.ListAPIView,generics.CreateAPIView):
 # USER: Read one, Update, Delete
 class UserRUD(generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     permission_classes = [IsAdmin]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserListSerializer
+        return UserUpdateSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)

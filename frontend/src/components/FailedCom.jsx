@@ -4,7 +4,7 @@ export default function FailedCom({ message = "Failed to fetch data", onRetry })
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center">
       {/* Circle Icon */}
-      <div className="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center mb-6 shadow-md">
+      <div className="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center mb-6 shadow-md">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-12 w-12 text-white"
@@ -27,7 +27,7 @@ export default function FailedCom({ message = "Failed to fetch data", onRetry })
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-5 py-2 bg-blue-900 text-white rounded-md shadow hover:bg-blue-800 transition"
+          className="px-5 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-400 transition"
         >
           Retry
         </button>

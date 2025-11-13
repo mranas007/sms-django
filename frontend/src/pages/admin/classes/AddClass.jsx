@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaTimes, FaChevronDown, FaSearch } from 'react-icons/fa';
+import BackBtn from '../../../components/BackBtn'; 
 
 // Reusable Multi-Select Component
 const MultiSelectDropdown = ({ label, options, selected, onChange, placeholder }) => {
@@ -45,7 +46,6 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, placeholder }
   return (
     <div className="relative" ref={dropdownRef}>
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      
       {/* Selected items display */}
       <div
         onClick={() => setIsOpen(!isOpen)}
@@ -209,6 +209,7 @@ const AddClass = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
+      <BackBtn/>
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">Add New Class</h1>
         <div className="space-y-6">

@@ -69,8 +69,8 @@ export default function UpdateUser() {
        
       const response = await Api.put(`/admin/user/${id}/`, formData);
       if (response.status === 200) {
-        setSuccess(true);
-        console.log('User updated successfully:', response.data);
+        navigate('/admin/users')
+        // console.log('User updated successfully:', response.data);
       }
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to update user.';
@@ -91,9 +91,9 @@ export default function UpdateUser() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Update User</h1>
      
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 border-b pb-4 border-gray-300 text-gray-800">Update User</h1>
         {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
           <strong className="font-bold">Error!</strong>
           <span className="block sm:inline"> {error}</span>

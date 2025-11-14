@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowCircleLeft, FaTrash, FaPlus, FaUsers, FaChalkboardTeacher, FaBook, FaCalendarAlt, FaSearch, FaInfo } from 'react-icons/fa';
+import { FaArrowCircleLeft,FaEdit, FaTrash, FaPlus, FaUsers, FaChalkboardTeacher, FaBook, FaCalendarAlt, FaSearch, FaInfo } from 'react-icons/fa';
 import Api from '../../../services/Api.jsx';
 import CircleLoader from '../../../components/CircleLoader.jsx';
 import ErrorMsg from '../../../components/ErrorMsg.jsx';
@@ -156,11 +156,21 @@ export default function ClassList() {
                       <Link
                         to={`/admin/class/detail/${cls.id}`}
                         className="bg-white bg-opacity-20 text-indigo-600 hover:bg-opacity-30 p-2 rounded-lg transition"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                        onClick={(e) => e.stopPropagation()}>
                         <FaInfo />
                       </Link>
-                      <DeleteConfirmation deleteUrl={`/admin/class/${cls.id}/`} onDeleteSuccess={isDeleteSuccess}/>
+                      <Link
+                        to={`/admin/class/edit/${cls.id}`}
+                        className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition flex items-center gap-2">
+                        <FaEdit />
+                      </Link>
+                      <DeleteConfirmation
+                        deleteUrl={`/admin/class/${cls.id}/`}
+                        onDeleteSuccess={isDeleteSuccess}
+                        itemName={cls.name}
+                        triggerType="icon" // or "button" (default)
+                      />
+                   
                     </div>
                   </div>
                 </div>

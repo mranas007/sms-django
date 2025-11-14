@@ -47,9 +47,10 @@ import AddClass from './pages/admin/classes/AddClass.jsx';
 import ClassList from './pages/admin/classes/ClassList.jsx';
 import EditClass from './pages/admin/classes/EditClass.jsx';
 import Subjects from './pages/admin/subjects/Subjects.jsx';
+import AddSubject from './pages/admin/subjects/AddSubject.jsx';
 import Actvivities from './pages/admin/UserActivities/Actvivities.jsx';
 
-
+  
 // RETURN NAVBAR COMPONENT BASED ON USER ROLE
 const AppNavbar = () => {
   const { isAuthenticate, accessToken } = useAuthContext();
@@ -93,9 +94,10 @@ function App() {
               <Route path="/admin/class/detail/:id" element={<ClassDetail />} />
               <Route path="/admin/users" element={<Users />} />
               <Route path="/admin/user/add" element={<AddUser />} />
-              <Route path="/admin/users/:role/:id" element={<UserDetails />} />
+              <Route path="/admin/user/:id" element={<UserDetails />} />
               <Route path="/admin/users/:id/update" element={<UpdateUser />} />
               <Route path="/admin/subjects" element={<Subjects />} />
+              <Route path="/admin/add/subject" element={<AddSubject />} />
               <Route path="/admin/activities" element={<Actvivities />} />
               {/* <Route path="*" element={<NotFound />} />
             </Routes> */}

@@ -69,7 +69,7 @@ export default function AddUser() {
     <div className="container mx-auto p-4">
       <BackBtn />
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
-        <h1 className="text-3xl border-b border-gray-400 font-bold mb-6 text-gray-800">Add New User</h1>
+        <h1 className="text-3xl mb-6 border-b pb-4 border-gray-300 font-bold text-gray-800">Add New User</h1>
         {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
           <strong className="font-bold">Error!</strong>
           <span className="block sm:inline"> {error}</span>
@@ -194,7 +194,7 @@ export default function AddUser() {
           />
         </div>
         <div className="flex justify-end">
-          <BackBtn /> {/* Use the new BackBtn component */}
+         
           <button
             type="submit"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

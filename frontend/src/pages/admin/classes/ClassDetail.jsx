@@ -92,7 +92,13 @@ export default function ClassDetail() {
               </div>
             </div>
             <div className="flex gap-3">
-              <DeleteConfirmation deleteUrl={`/admin/class/${classData.id}/`} onDeleteSuccess={isDeleteSuccess}/>
+              <DeleteConfirmation
+                deleteUrl={`/admin/class/${classData.id}/`}
+                onDeleteSuccess={isDeleteSuccess}
+                itemName={classData.name}
+            
+                triggerType="button" // or "icon" (default)
+              />
               <Link
                 to={`/admin/class/edit/${classData.id}`}
                 className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 p-3 rounded-lg transition flex items-center gap-2">

@@ -29,7 +29,6 @@ class UserCR(generics.ListAPIView,generics.CreateAPIView):
         role = self.request.query_params.get('role')
         search = self.request.query_params.get('search')
         if role:
-            print(role)
             queryset = queryset.filter(role=role)
         if search:
             queryset = queryset.filter(Q(username__icontains=search) | Q(email__icontains=search))

@@ -11,14 +11,14 @@ export default function Subjects() {
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
-
-    const fetchSubjects = async () => {
+    const fetchSubjects = async (search = '') => {
         try {
-            const res = await Api.get('/admin/subjects/');
-            // console.log(res.data);
-            setSubjects(res.data || []);
+            const res = await Api.get(`/admin/subjects/?s=${search}/`);
+            if(res.status == 200 || res.status == 201)
+                setSubjects(res.data);
+            console.log(res);
         } catch (err) {
             setError('Failed to fetch subjects.');
             console.error('Error fetching subjects:', err);
@@ -28,8 +28,11 @@ export default function Subjects() {
     };
 
     useEffect(() => {
-        fetchSubjects();
-    }, []);
+        const handler = setTimeout(() => {
+            fetchSubjects(searchQuery);
+        }, 300); // Debounce search
+        return () => clearTimeout(handler);
+      }, [searchQuery]);
 
 
     const handleDelete = async (subjectId) => {
@@ -43,12 +46,7 @@ export default function Subjects() {
             }
         }
     };
-
-    const filteredSubjects = Array.isArray(subjects) ? subjects.filter(
-        (subject) =>
-            subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.code.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [];
+        
 
     if (loading) {
         return <div className="h-screen w-full flex">
@@ -61,7 +59,7 @@ export default function Subjects() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 pt-20">
             <div className="max-w-7xl mx-auto">
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-8">
@@ -83,8 +81,8 @@ export default function Subjects() {
                                 type="text"
                                 placeholder="Search by subject name or code..."
                                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
                         <Link
@@ -97,7 +95,7 @@ export default function Subjects() {
                 </div>
 
                 {/* Subjects List */}
-                {filteredSubjects.length === 0 ? (
+                {subjects.length <= 0 ? (
                     <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                         <FaBook className="text-gray-300 text-6xl mx-auto mb-4" />
                         <p className="text-gray-500 text-lg">No subjects found</p>
@@ -114,7 +112,7 @@ export default function Subjects() {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {filteredSubjects.map((subject) => (
+                                {subjects.map((subject) => (
                                     <tr key={subject.id}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{subject.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{subject.code}</td>

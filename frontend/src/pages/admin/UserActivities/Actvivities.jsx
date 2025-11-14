@@ -47,8 +47,8 @@ export default function Actvivities() {
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-between items-center mb-6">
-                    <BackBtn to="/admin/dashboard" children="Go Back" />
                     <h1 className="text-2xl font-bold text-gray-900">User Activities</h1>
+                    <BackBtn to="/admin/dashboard" children="Go Back" />
                 </div>
 
                 {loading ? (

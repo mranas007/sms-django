@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 // import { MoreHorizontal, Loader2, TriangleAlert } from 'lucide-react';
-import { FaEllipsisH, FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
+import {FaTrash, FaEllipsisH, FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
 // Correcting the import path based on your project structure
 // Assuming services is at src/services/Api.js
 import apiClient from '../services/Api';
@@ -13,8 +13,9 @@ import apiClient from '../services/Api';
  * @param {function} props.onDeleteSuccess - Callback function to run after successful deletion (e.g., to refresh a list).
  * @param {string} [props.itemName] - The name of the item to display in the confirmation (e.g., "Class 10-A").
  * @param {string} [props.buttonSize] - Size of the trigger button (e.g., 'sm', 'md').
+ * @param {'icon' | 'button'} [props.triggerType] - Type of trigger to display ('icon' or 'button'). Defaults to 'button'.
  */
-const DeleteConfirmation = ({ deleteUrl, onDeleteSuccess, itemName = 'item', buttonSize = 'md' }) => {
+const DeleteConfirmation = ({ deleteUrl, onDeleteSuccess, itemName = 'item', buttonSize = 'md', triggerType = 'button' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -73,15 +74,26 @@ const DeleteConfirmation = ({ deleteUrl, onDeleteSuccess, itemName = 'item', but
 
   return (
     <div className="relative inline-block text-left" ref={wrapperRef}>
-      {/* Trigger Button (Three Dots) */}
-      <button
-        type="button"
-        onClick={handleOpen}
-        aria-label={`Actions for ${itemName}`}
-        className={`rounded-full ${buttonSizeClass} bg-indigo-600 text-white hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-      >
-        <FaEllipsisH size={buttonSize === 'sm' ? 16 : 20} />
-      </button>
+      {/* Trigger Button */}
+      {triggerType === 'icon' ? (
+        <button
+          type="button"
+          onClick={handleOpen}
+          aria-label={`Actions for ${itemName}`}
+          className={`rounded-lg ${buttonSizeClass} bg-white text-indigo-600 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition`}
+        >
+          <FaTrash size={buttonSize === 'sm' ? 16 : 20} />
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={handleOpen}
+          aria-label={`Delete ${itemName}`}
+          className={`inline-flex items-center justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${buttonSize === 'sm' ? 'px-3 py-1.5 text-xs' : ''}`}
+        >
+          Delete
+        </button>
+      )}
 
       {/* Confirmation Popover */}
       {isOpen && (

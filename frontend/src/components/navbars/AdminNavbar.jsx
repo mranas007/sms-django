@@ -26,6 +26,7 @@ export default function AdminNavbar() {
   return (
     <>
       {/* Top Navbar - Fixed */}
+      <div className="pb-20 bg-gray-100"></div>
       <header className="fixed top-0 left-0 right-0 flex justify-between items-center bg-white shadow-md p-4 z-40">
         <button onClick={toggleSidebar} className="text-gray-700 focus:outline-none">
           <FaBars className="h-6 w-6" />

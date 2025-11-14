@@ -22,78 +22,6 @@ const StatCard = ({ icon, title, value, color }) => (
   </div>
 );
 
-const AddSubjectModal = ({ isOpen, onClose }) => {
-  const [formData, setFormData] = useState({ name: '', code: '' });
-
-  if (!isOpen) return null;
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    Api.post('/admin/subjects/', formData)
-      .then((res) => {
-        setFormData({ name: '', code: '' });
-        onClose();
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-    // console.log(formData);
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Add New Subject</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="subjectName" className="block text-sm font-medium text-gray-700">Name</label>
-            <input
-              type="text"
-              id="subjectName"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="subjectCode" className="block text-sm font-medium text-gray-700">Code</label>
-            <input
-              type="text"
-              id="subjectCode"
-              name="code"
-              value={formData.code}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-          </div>
-          <div className="flex justify-end space-x-4 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Create Subject
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
 
 export default function AdminDashboard() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
@@ -115,7 +43,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-      <div className="container mx-auto p-8">
+      <div className="container mx-auto p-8 pt-20">
 
         {/* Quick Actions */}
         <div className="mb-8">  
@@ -127,12 +55,12 @@ export default function AdminDashboard() {
             >
               <FaPlus className="-ml-1 mr-3 h-5 w-5" /> Add New Class
             </Link>
-            <button
-              onClick={() => setIsSubjectModalOpen(true)}
+            <Link
+              to={'/admin/add/subject'}
               className="flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               <FaPlus className="-ml-1 mr-3 h-5 w-5" /> Add New Subject
-            </button>
+            </Link>
             <Link to="/admin/user/add"
               className="flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
             >
@@ -193,22 +121,60 @@ export default function AdminDashboard() {
 
         
 
-        {/* Recent Activities / Notifications (Placeholder) */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className='flex items-center justify-between mb-5'>
-              <h2 className="text-2xl font-bold text-gray-800">Recent Activities</h2>
-              <Link to='/admin/activities' className='p-3 rounded bg-indigo-600 hover:bg-indigo-700 transition-all  text-white'>See All Activities</Link>
-            </div>
-            <ul>
-              {stats.recent_activities && stats.recent_activities.map((activity) => (
-                <li key={activity.id} className="border-b border-gray-200 py-2">
-                  {activity.message}
-                </li>
-              ))}
-            </ul>
+         {/* Recent Activities Section */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Recent Activities</h2>
+
+            <Link
+              to="/admin/activities"
+              className="p-3 rounded bg-indigo-600 hover:bg-indigo-700 transition-all text-white"
+            >
+              See All Activities
+            </Link>
           </div>
 
-        <AddSubjectModal isOpen={isSubjectModalOpen} onClose={() => setIsSubjectModalOpen(false)} />
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Activity
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Timestamp
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {stats.recent_activities?.map((activity) => (
+                    <tr
+                      key={activity.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 py-4 whitespace-normal text-sm text-gray-900">
+                        {activity.message}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
       </div>
   );
 }

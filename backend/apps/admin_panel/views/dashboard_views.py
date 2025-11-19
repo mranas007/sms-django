@@ -27,4 +27,5 @@ class Dashboard(APIView):
             'total_classes': total_classes,
             'recent_activities': recent_activities.data
         }
+
         return Response(data)

@@ -164,12 +164,14 @@ export default function ClassList() {
                         className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition flex items-center gap-2">
                         <FaEdit />
                       </Link>
-                      <DeleteConfirmation
-                        deleteUrl={`/admin/class/${cls.id}/`}
-                        onDeleteSuccess={isDeleteSuccess}
-                        itemName={cls.name}
-                        triggerType="icon" // or "button" (default)
-                      />
+                      <div className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition flex items-center gap-2">
+                        <DeleteConfirmation
+                          deleteUrl={`/admin/class/${cls.id}/`}
+                          onDeleteSuccess={isDeleteSuccess}
+                          itemName={cls.name}
+                          triggerType="icon" // or "button" (default)
+                        />
+                      </div>
                    
                     </div>
                   </div>

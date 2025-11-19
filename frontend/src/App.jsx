@@ -49,6 +49,10 @@ import EditClass from './pages/admin/classes/EditClass.jsx';
 import Subjects from './pages/admin/subjects/Subjects.jsx';
 import AddSubject from './pages/admin/subjects/AddSubject.jsx';
 import Actvivities from './pages/admin/UserActivities/Actvivities.jsx';
+import EditSubject from './pages/admin/subjects/EditSubject.jsx';
+import Students from './pages/teacher/Students.jsx';
+import Classes from './pages/teacher/Classes.jsx';
+import Assignments from './pages/teacher/Assignments.jsx';
 
   
 // RETURN NAVBAR COMPONENT BASED ON USER ROLE
@@ -84,7 +88,11 @@ function App() {
       <Layout NavbarComponent={AppNavbar}>
         <Routes>
 
+
+
+
           {/* ADMIN ROUTES */}
+
           {/* <Route path="/admin/*" element={<ProtectedRouter allowedRoles={['Admin']}> */}
             {/* <Routes> */}
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -98,26 +106,39 @@ function App() {
               <Route path="/admin/users/:id/update" element={<UpdateUser />} />
               <Route path="/admin/subjects" element={<Subjects />} />
               <Route path="/admin/add/subject" element={<AddSubject />} />
+              <Route path="/admin/edit/subject/:id" element={<EditSubject />} />
               <Route path="/admin/activities" element={<Actvivities />} />
-              {/* <Route path="*" element={<NotFound />} />
-            </Routes> */}
+              {/* </Routes> */}
           {/* </ProtectedRouter>} /> */}
 
+
+
+
+
           {/* STUDENT ROUTES */}
+
           {/* <Route path="/student/*" element={<ProtectedRouter allowedRoles={['Student']}> */}
             {/* <Routes> */}
               <Route path="/student/dashboard" element={<StudentDashboard />} />
-              {/* <Route path="*" element={<NotFound />} />
-            </Routes> */}
+              {/* </Routes> */}
           {/* </ProtectedRouter>} /> */}
 
+
+
+
           {/* TEACHER ROUTES */}
+
           {/* <Route path="/teacher/*" element={<ProtectedRouter allowedRoles={['Teacher']}> */}
             {/* <Routes> */}
               <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-              {/* <Route path="*" element={<NotFound />} />
-            </Routes> */}
+              <Route path="/teacher/students" element={<Students />} />
+              <Route path="/teacher/classes" element={<Classes />} />
+              <Route path="/teacher/assignments" element={<Assignments />} />
+              {/* </Routes> */}
           {/* </ProtectedRouter>} /> */}
+
+
+
 
           {/* PUBLIC ROUTES */}
           <Route path="/" element={<Home />} />
@@ -126,6 +147,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           
           <Route path="*" element={<NotFound />} />
+          
         </Routes>
       </Layout>
     </AuthProvider>

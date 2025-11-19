@@ -5,7 +5,7 @@ import Api from '../../../services/Api.jsx';
 import CircleLoader from '../../../components/CircleLoader.jsx';
 import ErrorMsg from '../../../components/ErrorMsg.jsx';
 import BackBtn from '../../../components/BackBtn'
-
+import DeleteConfirmation from '../../../components/DeleteConfirmation.jsx';
 
 export default function Subjects() {
     const [subjects, setSubjects] = useState([]);
@@ -15,13 +15,13 @@ export default function Subjects() {
 
     const fetchSubjects = async (search = '') => {
         try {
-            const res = await Api.get(`/admin/subjects/?s=${search}/`);
+            const res = await Api.get(`/admin/subjects/?s=${search}`);
             if(res.status == 200 || res.status == 201)
                 setSubjects(res.data);
-            console.log(res);
+            // console.log(res.data);
         } catch (err) {
             setError('Failed to fetch subjects.');
-            console.error('Error fetching subjects:', err);
+            // console.error('Error fetching subjects:', err);
         } finally {
             setLoading(false);
         }
@@ -35,16 +35,8 @@ export default function Subjects() {
       }, [searchQuery]);
 
 
-    const handleDelete = async (subjectId) => {
-        if (window.confirm('Are you sure you want to delete this subject?')) {
-            try {
-                await Api.delete('/admin/subject/' + subjectId);
-                setSubjects(subjects.filter((subject) => subject.id !== subjectId));
-            } catch (err) {
-                setError('Failed to delete subject.');
-                console.error('Error deleting subject:', err);
-            }
-        }
+    const handleDelete = () => {
+        fetchSubjects(searchQuery);
     };
         
 
@@ -108,7 +100,7 @@ export default function Subjects() {
                                 <tr>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                                    <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -117,12 +109,17 @@ export default function Subjects() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{subject.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{subject.code}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <Link to={`/admin/subject/${subject.id}/edit`} className="text-indigo-600 hover:text-indigo-900 mr-4">
+                                          
+                                            <Link to={`/admin/edit/subject/${subject.id}`} className="p-2 rounded bg-indigo-600 hover:bg-indigo-900 text-white mr-4">
                                                 <FaEdit className="inline-block mr-1" /> Edit
                                             </Link>
-                                            <button onClick={() => handleDelete(subject.id)} className="text-red-600 hover:text-red-900">
-                                                <FaTrash className="inline-block mr-1" /> Delete
-                                            </button>
+                                            <DeleteConfirmation 
+                                                deleteUrl={`/admin/subject/${subject.id}/`}
+                                                onDeleteSuccess={handleDelete}
+                                                itemName={subject.name}
+                                                buttonSize="sm"
+                                            />
+
                                         </td>
                                     </tr>
                                 ))}

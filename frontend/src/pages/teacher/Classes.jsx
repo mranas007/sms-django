@@ -9,7 +9,7 @@ import apiClient from "../../services/Api.jsx";
 import CircleLoader from '../../components/CircleLoader.jsx'
 
 
-function TeacherDashboard() {
+function Classes() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -73,14 +73,14 @@ function TeacherDashboard() {
                     ))}
                   </ul>
                 </div>
-                <div className="mt-2">
+                {/* <div className="mt-2">
                   <h5 className="text-md font-semibold">Teachers:</h5>
                   <ul className="list-disc list-inside text-sm text-gray-600">
                     {cls.teachers.map((teacher) => (
                       <li key={teacher.id}>{teacher.full_name}</li>
                     ))}
                   </ul>
-                </div>
+                </div> */}
                 <div className="mt-2">
                   <h5 className="text-md font-semibold">Students:</h5>
                   <ul className="list-disc list-inside text-sm text-gray-600">
@@ -95,9 +95,8 @@ function TeacherDashboard() {
         )}
       </div>
 
-
     </>
   );
 }
 
-export default TeacherDashboard
+export default Classes

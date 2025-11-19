@@ -1,6 +1,6 @@
 from apps.core.models import Class, Subject
 from apps.accounts.models import User
-from rest_framework.serializers import Serializer, ModelSerializer, CharField, PrimaryKeyRelatedField
+from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
 
 
 

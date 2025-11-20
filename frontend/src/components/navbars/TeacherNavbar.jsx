@@ -21,32 +21,32 @@ export default function TeacherNavbar() {
             className="flex items-center cursor-pointer"
             onClick={() => navigate("/teacher/dashboard")}
           >
-            <h1 className="text-2xl font-bold text-blue-800">TeacherPanel</h1>
+            <h1 className="text-2xl font-bold text-indigo-600">TeacherPanel</h1>
           </div>
 
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-8">
             <button
               onClick={() => navigate("/teacher/dashboard")}
-              className="text-gray-700 hover:text-blue-800 font-medium"
+              className="text-gray-700 hover:text-indigo-600 font-medium"
             >
               Dashboard
             </button>
             <button
               onClick={() => navigate("/teacher/classes")}
-              className="text-gray-700 hover:text-blue-800 font-medium"
+              className="text-gray-700 hover:text-indigo-600 font-medium"
             >
               Classes
             </button>
             <button
               onClick={() => navigate("/teacher/students")}
-              className="text-gray-700 hover:text-blue-800 font-medium"
+              className="text-gray-700 hover:text-indigo-600 font-medium"
             >
               Students
             </button>
             <button
               onClick={() => navigate("/teacher/assignments")}
-              className="text-gray-700 hover:text-blue-800 font-medium"
+              className="text-gray-700 hover:text-indigo-600 font-medium"
             >
               Assignments
             </button>
@@ -54,10 +54,10 @@ export default function TeacherNavbar() {
 
           {/* Right */}
           <div className="hidden md:flex items-center space-x-4">
-            <span className="text-gray-600 font-medium">👨‍🏫 Teacher</span>
+            <span className="text-gray-600 font-medium">Teacher</span>
             <button
               onClick={handleLogout}
-              className="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
             >
               Logout
             </button>

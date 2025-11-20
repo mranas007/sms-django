@@ -14,8 +14,8 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
-    
-    
+
+
 class Class(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=100)
@@ -28,3 +28,20 @@ class Class(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+
+class Assignment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assignments_created')
+    class_assigned = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='assignments_class')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='assignments')
+    due_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title

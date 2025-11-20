@@ -52,7 +52,8 @@ import Actvivities from './pages/admin/UserActivities/Actvivities.jsx';
 import EditSubject from './pages/admin/subjects/EditSubject.jsx';
 import Students from './pages/teacher/Students.jsx';
 import Classes from './pages/teacher/Classes.jsx';
-import Assignments from './pages/teacher/Assignments.jsx';
+import Assignments from './pages/teacher/Assignments/Assignments.jsx';
+import CreateAssignment from './pages/teacher/Assignments/CreateAssignment.jsx';
 
   
 // RETURN NAVBAR COMPONENT BASED ON USER ROLE
@@ -134,6 +135,7 @@ function App() {
               <Route path="/teacher/students" element={<Students />} />
               <Route path="/teacher/classes" element={<Classes />} />
               <Route path="/teacher/assignments" element={<Assignments />} />
+              <Route path="/teacher/assignments/create" element={<CreateAssignment />} />
               {/* </Routes> */}
           {/* </ProtectedRouter>} /> */}
 

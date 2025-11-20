@@ -1,6 +1,6 @@
 from django.contrib import admin
 from apps.activity_log.utils import log_activity
-from .models import Subject, Class
+from .models import Subject, Class, Assignment
 
 
 # Register your models here.
@@ -46,3 +46,6 @@ class SubjectAdmin(admin.ModelAdmin):
         log_activity(request.user, action_type, message, obj)
 
 admin.site.register(Subject, SubjectAdmin)
+
+
+admin.site.register(Assignment)

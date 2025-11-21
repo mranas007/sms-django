@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { FaBook, FaUsers, FaCalendarAlt, FaChalkboardTeacher, FaGraduationCap } from 'react-icons/fa';
 
 // SERVICES
-import apiClient from "../../services/Api.jsx";
+import apiClient from "../../../services/Api.jsx";
 
 // COMPONENTS
-import CircleLoader from '../../components/CircleLoader.jsx'
+import CircleLoader from '../../../components/CircleLoader.jsx'
 
 
 function Classes() {

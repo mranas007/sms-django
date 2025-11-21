@@ -5,7 +5,7 @@ from apps.core.models import Assignment, User, Class, Subject
 
 
 # SERIALIZER FOR CREATING ASSIGNMENTS - ASSIGNMENT VIEW
-class AssignmentCreateSerializer(serializers.ModelSerializer):
+class AssignmentCreateUpdateSerializer(serializers.ModelSerializer):
 
     title = serializers.CharField(max_length=255)
     description = serializers.CharField()
@@ -38,9 +38,26 @@ class AssignmentCreateSerializer(serializers.ModelSerializer):
             due_date=validated_data["due_date"],
         )
         return assignment
-
-
-# ---------------------------------
+    
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+        
+        if "class_assigned" in validated_data:
+            try:
+                class_assigned = Class.objects.get(id=validated_data["class_assigned"])
+                instance.class_assigned = class_assigned
+            except Class.DoesNotExist:
+                raise serializers.ValidationError({"class_assigned": "Class not found."})
+        if "subject" in validated_data:
+            try:
+                subject = Subject.objects.get(id=validated_data["subject"])
+                instance.subject = subject
+            except Subject.DoesNotExist:
+                raise serializers.ValidationError({"subject": "Subject not found."})
+        instance.due_date = validated_data.get("due_date", instance.due_date)
+        instance.save()
+        return instance
 
 
 # NESTED SERIALIZERS FOR LISTING ASSIGNMENTS  - TEACHER

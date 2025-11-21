@@ -15,7 +15,6 @@ function TeacherDashboard() {
   const [error, setError] = useState(null);
   const [classes, setClasses] = useState([]);
 
-
   const fetchData = async () => {
     setLoading(true);
     setError(null);

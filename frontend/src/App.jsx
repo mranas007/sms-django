@@ -53,24 +53,27 @@ import EditSubject from './pages/admin/subjects/EditSubject.jsx';
 import Students from './pages/teacher/Students.jsx';
 import Classes from './pages/teacher/Classes.jsx';
 import Assignments from './pages/teacher/Assignments/Assignments.jsx';
-import CreateAssignment from './pages/teacher/Assignments/CreateAssignment.jsx';
+import AssignmentCreate from './pages/teacher/Assignments/AssignmentCreate.jsx';
+import AssignmentEdit from './pages/teacher/Assignments/AssignmentEdit.jsx';
+import AssignmentDetail from './pages/teacher/Assignments/AssignmentDetail.jsx';
 
-  
+
+
 // RETURN NAVBAR COMPONENT BASED ON USER ROLE
 const AppNavbar = () => {
   const { isAuthenticate, accessToken } = useAuthContext();
 
   if (!isAuthenticate || !accessToken) {
-    return <Navbar />;
+    return <Navbar />
   }
 
   try {
     const user = jwtDecode(accessToken);
     // Centralized role-to-route mapping for maintainability
     const roleNavbar = {
-      Admin:<AdminNavbar />,
+      Admin: <AdminNavbar />,
       Student: <StudentNavbar />,
-      Teacher: <TeacherNavbar /> 
+      Teacher: <TeacherNavbar />
     };
     // Validate user object structure and valid role
     const isValidUser = user && user.role && Object.hasOwn(roleNavbar, user.role);
@@ -89,57 +92,48 @@ function App() {
       <Layout NavbarComponent={AppNavbar}>
         <Routes>
 
-
-
-
           {/* ADMIN ROUTES */}
+          <Route element={<ProtectedRouter allowedRoles={['Admin']} />}>
 
-          {/* <Route path="/admin/*" element={<ProtectedRouter allowedRoles={['Admin']}> */}
-            {/* <Routes> */}
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/classes" element={<ClassList />} />
-              <Route path="/admin/add/class" element={<AddClass />} />
-              <Route path="admin/class/edit/:id" element={<EditClass />} />
-              <Route path="/admin/class/detail/:id" element={<ClassDetail />} />
-              <Route path="/admin/users" element={<Users />} />
-              <Route path="/admin/user/add" element={<AddUser />} />
-              <Route path="/admin/user/:id" element={<UserDetails />} />
-              <Route path="/admin/users/:id/update" element={<UpdateUser />} />
-              <Route path="/admin/subjects" element={<Subjects />} />
-              <Route path="/admin/add/subject" element={<AddSubject />} />
-              <Route path="/admin/edit/subject/:id" element={<EditSubject />} />
-              <Route path="/admin/activities" element={<Actvivities />} />
-              {/* </Routes> */}
-          {/* </ProtectedRouter>} /> */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/classes" element={<ClassList />} />
+            <Route path="/admin/add/class" element={<AddClass />} />
+            <Route path="/admin/class/edit/:id" element={<EditClass />} />
+            <Route path="/admin/class/detail/:id" element={<ClassDetail />} />
+            <Route path="/admin/users" element={<Users />} />
+            <Route path="/admin/user/add" element={<AddUser />} />
+            <Route path="/admin/user/:id" element={<UserDetails />} />
+            <Route path="/admin/users/:id/update" element={<UpdateUser />} />
+            <Route path="/admin/subjects" element={<Subjects />} />
+            <Route path="/admin/add/subject" element={<AddSubject />} />
+            <Route path="/admin/edit/subject/:id" element={<EditSubject />} />
+            <Route path="/admin/activities" element={<Actvivities />} />
 
-
+          </Route>
 
 
 
           {/* STUDENT ROUTES */}
+          <Route element={<ProtectedRouter allowedRoles={['Student', 'Admin']} />}>
 
-          {/* <Route path="/student/*" element={<ProtectedRouter allowedRoles={['Student']}> */}
-            {/* <Routes> */}
-              <Route path="/student/dashboard" element={<StudentDashboard />} />
-              {/* </Routes> */}
-          {/* </ProtectedRouter>} /> */}
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
 
+          </Route>
 
 
 
           {/* TEACHER ROUTES */}
+          <Route element={<ProtectedRouter allowedRoles={['Teacher', 'Admin']} />}>
 
-          {/* <Route path="/teacher/*" element={<ProtectedRouter allowedRoles={['Teacher']}> */}
-            {/* <Routes> */}
-              <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-              <Route path="/teacher/students" element={<Students />} />
-              <Route path="/teacher/classes" element={<Classes />} />
-              <Route path="/teacher/assignments" element={<Assignments />} />
-              <Route path="/teacher/assignments/create" element={<CreateAssignment />} />
-              {/* </Routes> */}
-          {/* </ProtectedRouter>} /> */}
+            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            <Route path="/teacher/students" element={<Students />} />
+            <Route path="/teacher/classes" element={<Classes />} />
+            <Route path="/teacher/assignments" element={<Assignments />} />
+            <Route path="/teacher/assignments/create" element={<AssignmentCreate />} />
+            <Route path="/teacher/assignment/detail/:id" element={<AssignmentDetail />} />
+            <Route path="/teacher/assignment/edit/:id" element={<AssignmentEdit />} />
 
-
+          </Route>
 
 
           {/* PUBLIC ROUTES */}
@@ -147,9 +141,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
-          
+
           <Route path="*" element={<NotFound />} />
-          
+
         </Routes>
       </Layout>
     </AuthProvider>

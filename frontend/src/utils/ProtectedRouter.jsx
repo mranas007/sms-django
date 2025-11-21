@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useAuthContext } from "../context/AuthContext.jsx";
+import CircleLoader from '../components/CircleLoader.jsx'
 
-export function ProtectedRouter({ children, allowedRoles }) {
-  const { isAuthenticate ,accessToken } = useAuthContext();
+
+export function ProtectedRouter({ allowedRoles }) {
+  const { isAuthenticate, accessToken } = useAuthContext();
   const [isAuthorized, setIsAuthorized] = useState(null);
 
   useEffect(() => {
@@ -33,8 +35,10 @@ export function ProtectedRouter({ children, allowedRoles }) {
   }, [accessToken, allowedRoles, isAuthenticate]);
 
   if (isAuthorized === null) {
-    return <div>Loading...</div>;
+    return <div className="w-full h-screen flex justify-center items-center">
+      <CircleLoader />
+    </div>;
   }
 
-  return isAuthorized ? children : <Navigate to="/login" replace />;
+  return isAuthorized ? <Outlet /> : <Navigate to="/login" replace />;
 }

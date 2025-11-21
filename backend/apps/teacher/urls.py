@@ -9,5 +9,6 @@ urlpatterns = [
     path('dashboard/', dashboard.TeacherDashboard.as_view(), name='dashboard'),
 
     path('assignments/', assignments.AssignmentView.as_view(), name='assignments'),
+    path('assignments/<uuid:assignment_id>/', assignments.AssignmentDetailView.as_view(), name='assignment_detail'),
     path('assignments/classes-subjects/', assignments.ClassesSubjectsView.as_view(), name='my_classes'),
 ]

@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "../../../services/Api";
 import BackBtn from "../../../components/BackBtn";
 
-export default function CreateAssignment() {
+
+
+export default function AssignmentCreate() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const [classes, setClasses] = useState([]);
     const [subjects, setSubjects] = useState([]);

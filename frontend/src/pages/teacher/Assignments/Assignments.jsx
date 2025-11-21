@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { FaBook, FaCalendarAlt, FaUsers, FaClock, FaClipboardList } from 'react-icons/fa'
+import { FaBook,FaInfo, FaEdit, FaCalendarAlt, FaUsers, FaClock, FaClipboardList } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 import apiClient from '../../../services/Api.jsx'
 import CircleLoader from '../../../components/CircleLoader'
 import Btn from '../../../components/Btn.jsx'
+import DeleteConfirmation from '../../../components/DeleteConfirmation.jsx'
 
 export default function Assignments() {
     const [loading, setLoading] = useState(false)
@@ -41,6 +42,10 @@ export default function Assignments() {
         return new Date(dueDate) < new Date()
     }
 
+    const isDeleteSuccess = () => {
+        fetchData()
+    }
+
     if (loading) return <div className="h-screen w-full flex items-center justify-center"><CircleLoader /></div>;
     if (error) return <p className="text-red-600">{error}</p>;
 
@@ -58,7 +63,7 @@ export default function Assignments() {
                     <div>
                         <Link to="/teacher/assignments/create">
                             <Btn
-                            text={'Create Assignment'} />
+                                text={'Create Assignment'} />
                         </Link>
                     </div>
                 </div>
@@ -123,11 +128,39 @@ export default function Assignments() {
                                 >
                                     {/* Card Header */}
                                     <div className={`p-6 text-white ${isOverdue(assignment.due_date) ? 'bg-red-600' : 'bg-indigo-600'}`}>
-                                        <h4 className="text-2xl font-bold mb-2">{assignment.title}</h4>
-                                        <div className="flex items-center gap-2 text-indigo-100">
-                                            <FaBook className="text-sm" />
-                                            <span className="text-sm">{assignment.subject?.name || 'N/A'}</span>
+
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h4 className="text-2xl font-bold mb-2">{assignment.title}</h4>
+                                                <div className="flex items-center gap-2 text-indigo-100">
+                                                    <FaBook className="text-sm" />
+                                                    <span className="text-sm">{assignment.subject?.name || 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Link
+                                                    to={`/teacher/assignment/detail/${assignment.id}`}
+                                                    className="bg-white bg-opacity-20 text-indigo-600 hover:bg-opacity-30 p-2 rounded-lg transition"
+                                                    onClick={(e) => e.stopPropagation()}>
+                                                    <FaInfo />
+                                                </Link>
+                                                <Link
+                                                    to={`/teacher/assignment/edit/${assignment.id}`}
+                                                    className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition flex items-center gap-2">
+                                                    <FaEdit />
+                                                </Link>
+                                                <div className="bg-white text-indigo-600 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition flex items-center gap-2">
+                                                    <DeleteConfirmation
+                                                        deleteUrl={`/teacher/assignments/${assignment.id}/`}
+                                                        onDeleteSuccess={isDeleteSuccess}
+                                                        itemName={assignment.name}
+                                                        triggerType="icon" // or "button" (default)
+                                                    />
+                                                </div>
+
+                                            </div>
                                         </div>
+
                                     </div>
 
                                     {/* Card Body */}

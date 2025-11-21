@@ -24,6 +24,7 @@ apiClient.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+
 // Response interceptor: Handle token refresh
 apiClient.interceptors.response.use(
     (response) => response,
@@ -31,8 +32,8 @@ apiClient.interceptors.response.use(
         const originalRequest = error.config;
 
         // Handle 401 and token refresh
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+        if (error.response?.status === 401) {
+
 
             try {
                 const refreshToken = localStorage.getItem(REFRESH_TOKEN);
@@ -50,13 +51,17 @@ apiClient.interceptors.response.use(
 
                     // --- FIX 2: Update default headers on 'apiClient' ---
                     apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-                    
+
                     // --- FIX 3: Update the original request's header ---
                     originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
-                    
+
                     // --- FIX 4: Retry the original request with 'apiClient' ---
                     return apiClient(originalRequest);
+
+                } else {
+                    localStorage.clear()
                 }
+
             } catch (refreshError) {
                 // Refresh failed, log user out
                 localStorage.removeItem(ACCESS_TOKEN);

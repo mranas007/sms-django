@@ -9,50 +9,50 @@ import apiClient from "../../services/Api.jsx";
 import CircleLoader from '../../components/CircleLoader.jsx'
 
 // CONTEXT
-import {useAuthContext} from '../../context/AuthContext.jsx';
+import { useAuthContext } from '../../context/AuthContext.jsx';
 
 
 
 function StudentDashboard() {
-  const {isAuthenticate}= useAuthContext()
+  const { isAuthenticate } = useAuthContext()
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
 
-   const checkAuth = async () => {
-      const isAuth = await isAuthenticate();
-      if (!isAuth) {
-        navigate("/login");
-      } else {
-        console.log("User is authenticated");
-      }
+  const checkAuth = async () => {
+    const isAuth = await isAuthenticate();
+    if (!isAuth) {
+      navigate("/login");
+    } else {
+      console.log("User is authenticated");
     }
+  }
 
-       const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await apiClient.get("/student/dashboard/");
-        // console.log("Fetched data:", res.data);
-        setClasses(res.data); // assuming res.data is an array of classes
-      } catch (error) {
-        console.error("Error fetching student data:", error);
-        setError(
-          error.response?.data?.message ||
-            "Failed to load dashboard data. Please try again."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await apiClient.get("/student/dashboard/");
+      // console.log("Fetched data:", res.data);
+      setClasses(res.data); // assuming res.data is an array of classes
+    } catch (error) {
+      console.error("Error fetching student data:", error);
+      setError(
+        error.response?.data?.message ||
+        "Failed to load dashboard data. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
 
     fetchData();
     // checkAuth();
-    
+
   }, []);
 
   if (loading) return <div className="h-screen w-full">
@@ -100,7 +100,7 @@ function StudentDashboard() {
         )}
       </div>
 
-    
+
     </>
   );
 }

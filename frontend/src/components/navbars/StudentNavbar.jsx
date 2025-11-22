@@ -7,7 +7,7 @@ export default function StudentNavbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuthContext();
-  
+
   const handleLogout = () => {
     logout()
     navigate("/login");
@@ -34,10 +34,16 @@ export default function StudentNavbar() {
               Dashboard
             </button>
             <button
-              onClick={() => navigate("/student/courses")}
+              onClick={() => navigate("/student/class")}
               className="text-gray-700 hover:text-blue-800 font-medium"
             >
-              Courses
+              Class
+            </button>
+            <button
+              onClick={() => navigate("/student/assignments")}
+              className="text-gray-700 hover:text-blue-800 font-medium"
+            >
+              Assignments
             </button>
             <button
               onClick={() => navigate("/student/grades")}
@@ -49,7 +55,7 @@ export default function StudentNavbar() {
 
           {/* Right */}
           <div className="hidden md:flex items-center space-x-4">
-            <span className="text-gray-600 font-medium">🎓 Student</span>
+            <span className="text-gray-600 font-medium">Student</span>
             <button
               onClick={handleLogout}
               className="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition"
@@ -85,12 +91,21 @@ export default function StudentNavbar() {
             </button>
             <button
               onClick={() => {
-                navigate("/student/courses");
+                navigate("/student/class");
                 setMenuOpen(false);
               }}
               className="block w-full text-left text-gray-700 hover:text-blue-800 font-medium"
             >
-              Courses
+              Class
+            </button>
+            <button
+              onClick={() => {
+                navigate("/student/assignments");
+                setMenuOpen(false);
+              }}
+              className="block w-full text-left text-gray-700 hover:text-blue-800 font-medium"
+            >
+              Assignments
             </button>
             <button
               onClick={() => {

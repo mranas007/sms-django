@@ -28,20 +28,17 @@ import Layout from './layouts/Layout.jsx';
 
 
 // PAGES
-import NotFound from './pages/NotFound.jsx';
-import Login from './pages/account/Login.jsx';
 import Home from './pages/guest/Home.jsx';
 import About from './pages/guest/About.jsx';
 import Contact from './pages/guest/Contact.jsx';
-import AdminDashboard from './pages/admin/AdminDashboard.jsx';
-import StudentDashboard from './pages/student/StudentDashboard.jsx';
-import TeacherDashboard from './pages/teacher/TeacherDashboard.jsx';
+import Login from './pages/account/Login.jsx';
+import NotFound from './pages/NotFound.jsx';
 
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import Users from './pages/admin/users/Users.jsx';
 import UserDetails from './pages/admin/users/UserDetails.jsx';
 import AddUser from './pages/admin/users/AddUser.jsx';
 import UpdateUser from './pages/admin/users/UpdateUser.jsx';
-
 import ClassDetail from './pages/admin/classes/ClassDetail.jsx';
 import AddClass from './pages/admin/classes/AddClass.jsx';
 import ClassList from './pages/admin/classes/ClassList.jsx';
@@ -50,12 +47,22 @@ import Subjects from './pages/admin/subjects/Subjects.jsx';
 import AddSubject from './pages/admin/subjects/AddSubject.jsx';
 import Actvivities from './pages/admin/UserActivities/Actvivities.jsx';
 import EditSubject from './pages/admin/subjects/EditSubject.jsx';
+
+import TeacherDashboard from './pages/teacher/TeacherDashboard.jsx';
 import Students from './pages/teacher/Students/Students.jsx';
 import Classes from './pages/teacher/Classes/Classes.jsx';
 import Assignments from './pages/teacher/Assignments/Assignments.jsx';
 import AssignmentCreate from './pages/teacher/Assignments/AssignmentCreate.jsx';
 import AssignmentEdit from './pages/teacher/Assignments/AssignmentEdit.jsx';
 import AssignmentDetail from './pages/teacher/Assignments/AssignmentDetail.jsx';
+
+import StudentDashboard from './pages/student/StudentDashboard.jsx';
+import StudentAssignments from './pages/student/Assignments/Assignments.jsx';
+import StudentAssignmentDetail from './pages/student/Assignments/AssignmentDetail.jsx';
+import StudentAssignmentSubmission from './pages/student/Assignments/AssignmentSubmission.jsx';
+import StudentClass from './pages/student/Classes/ClassDetail.jsx';
+
+
 
 
 
@@ -117,6 +124,10 @@ function App() {
           <Route element={<ProtectedRouter allowedRoles={['Student', 'Admin']} />}>
 
             <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/student/class" element={<StudentClass />} />
+            <Route path="/student/assignments" element={<StudentAssignments />} />
+            <Route path="/student/assignment/:id" element={<StudentAssignmentDetail />} />
+            <Route path="/student/assignment/:id/submit" element={<StudentAssignmentSubmission />} />
 
           </Route>
 

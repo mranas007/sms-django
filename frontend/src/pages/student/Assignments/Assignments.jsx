@@ -16,6 +16,7 @@ export default function Assignments() {
         try {
             setLoading(true);
             const res = await apiClient.get('/student/assignments/');
+            // console.log(res.data)    
             setAssignments(res.data);
         } catch (error) {
             const msg = error.message || "Something went wrong!";

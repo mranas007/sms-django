@@ -50,6 +50,12 @@ export default function TeacherNavbar() {
             >
               Assignments
             </button>
+            <button
+              onClick={() => navigate("/teacher/assignment-submissions")}
+              className="text-gray-700 hover:text-indigo-600 font-medium"
+            >
+              Assignment Submissions
+            </button>
           </div>
 
           {/* Right */}

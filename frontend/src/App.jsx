@@ -55,6 +55,8 @@ import Assignments from './pages/teacher/Assignments/Assignments.jsx';
 import AssignmentCreate from './pages/teacher/Assignments/AssignmentCreate.jsx';
 import AssignmentEdit from './pages/teacher/Assignments/AssignmentEdit.jsx';
 import AssignmentDetail from './pages/teacher/Assignments/AssignmentDetail.jsx';
+import StudentSubmittedAssignments from './pages/teacher/Assignment_Submission/StudentSubmitedAssignments.jsx';
+import StudentSubmittedAssignmentDetail from './pages/teacher/Assignment_Submission/StudentSubmittedAssignmentDetail.jsx';
 
 import StudentDashboard from './pages/student/StudentDashboard.jsx';
 import StudentAssignments from './pages/student/Assignments/Assignments.jsx';
@@ -143,6 +145,8 @@ function App() {
             <Route path="/teacher/assignments/create" element={<AssignmentCreate />} />
             <Route path="/teacher/assignment/detail/:id" element={<AssignmentDetail />} />
             <Route path="/teacher/assignment/edit/:id" element={<AssignmentEdit />} />
+            <Route path="/teacher/assignment-submissions" element={<StudentSubmittedAssignments />} />
+            <Route path="/teacher/assignment-submissions/:id" element={<StudentSubmittedAssignmentDetail />} />
 
           </Route>
 

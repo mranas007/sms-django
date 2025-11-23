@@ -27,16 +27,5 @@ class AssignmentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['id', 'title', 'description','assignment_submissions',  'due_date', 'created_at', 'teacher', 'class_assigned', 'subject']
+        fields = ['id', 'title', 'description','assignment_submissions', 'due_date', 'created_at', 'teacher', 'class_assigned', 'subject']
 
-
-# {
-#     "id": "bc2914e9-06a5-43df-84bb-4f4f9888ca76",
-#     "title": "Python Decorators",
-#     "description": "let's make 2 or 3 decorators for check your user is it authenticated and is it not block",
-#     "due_date": "2026-01-20T14:02:00Z",
-#     "created_at": "2025-11-21T19:04:08.162900Z",
-#     "teacher": "e4f20126-0b7d-4193-8dea-562ff90befad",
-#     "class_assigned": "76ce2a99-eab8-4974-b474-809bd41305b4",
-#     "subject": "870bcf51-6c0f-43b9-826a-54343865d3f3",
-# }

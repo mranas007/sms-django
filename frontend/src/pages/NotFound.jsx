@@ -1,66 +1,37 @@
-// REACT HOOKS
-import { React } from 'react';
-import { FaHome, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaExclamationTriangle, FaHome } from 'react-icons/fa';
+import Button from '../components/common/Button';
 
-export default function NotFound() {
-  function goBack() {
-    window.history.back();
-  }
-
-  function goHome() {
-    window.location.href = '/';
-  }
+function NotFound() {
 
   return (
-    <section className="fixed inset-0 z-50 flex items-center justify-center w-screen h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-inter">
-      <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-        <div className="mx-auto max-w-screen-sm text-center">
-          {/* Icon with background */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 p-8 rounded-full shadow-xl">
-              <FaExclamationTriangle className="text-white text-6xl" />
-            </div>
-          </div>
-
-          {/* Big 404 heading with gradient */}
-          <h1 className="mb-4 text-8xl tracking-tight font-extrabold lg:text-9xl bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent">
-            404
-          </h1>
-
-          {/* Main message */}
-          <p className="mb-4 text-3xl tracking-tight font-bold text-gray-800 md:text-4xl">
-            Oops! Page Not Found
-          </p>
-
-          {/* Description */}
-          <p className="mb-8 text-lg text-gray-600">
-            The page you're looking for seems to have wandered off. 
-            Don't worry, let's get you back on track!
-          </p>
-
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={goBack}
-              className="inline-flex items-center justify-center gap-2 text-white bg-indigo-600 hover:bg-indigo-700 
-                         focus:ring-4 focus:outline-none focus:ring-indigo-300 font-semibold rounded-lg 
-                         text-sm px-6 py-3 shadow-md hover:shadow-lg transition-all duration-200 ease-in-out"
-            >
-              <FaArrowLeft /> Go Back
-            </button>
-            
-            <button
-              onClick={goHome}
-              className="inline-flex items-center justify-center gap-2 text-indigo-600 bg-white hover:bg-gray-50 
-                         border-2 border-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300 
-                         font-semibold rounded-lg text-sm px-6 py-3 shadow-md hover:shadow-lg 
-                         transition-all duration-200 ease-in-out"
-            >
-              <FaHome /> Home Page
-            </button>
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <div className="flex justify-center mb-6">
+          <div className="bg-red-100 p-4 rounded-full">
+            <FaExclamationTriangle className="text-red-500 text-5xl" />
           </div>
         </div>
+        <h2 className="text-6xl font-extrabold text-gray-900 tracking-tight">404</h2>
+        <h3 className="mt-2 text-2xl font-bold text-gray-900">Page Not Found</h3>
+        <p className="mt-4 text-gray-500 text-lg">
+          Oops! The page you are looking for does not exist or has been moved.
+        </p>
+
+        <div className="mt-8">
+          <Button
+            variant="primary"
+            onClick={() => window.history.back()}
+            icon={<FaHome />}
+            className="mx-auto"
+          >
+            Go Back
+          </Button>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
+
+export default NotFound;

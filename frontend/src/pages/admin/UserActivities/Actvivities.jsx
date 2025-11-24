@@ -1,96 +1,138 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaClock } from 'react-icons/fa';
 
-import apiClient from '../../../services/Api'
-import BackBtn from '../../../components/BackBtn'
-import CircleLoader from '../../../components/CircleLoader'
-import ErrorMsg from '../../../components/ErrorMsg'
-import Pagination from '../../../components/Pagination'
+// SERVICES & UTILS
+import apiClient from '../../../services/Api';
 
-
+// COMPONENTS
+import Card from '../../../components/common/Card.jsx';
+import Button from '../../../components/common/Button.jsx';
+import Badge from '../../../components/common/Badge.jsx';
+import Table from '../../../components/common/Table.jsx';
+import CircleLoader from '../../../components/CircleLoader';
+import ErrorMsg from '../../../components/ErrorMsg';
+import Pagination from '../../../components/Pagination';
 
 export default function Actvivities() {
-    const [activities, setActivities] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
-    const [pagination, setPagination] = useState({ count: 0, next: null, previous: null })
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [pagination, setPagination] = useState({ count: 0, next: null, previous: null });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        getActivities(currentPage)
-    }, [currentPage])
+        getActivities(currentPage);
+    }, [currentPage]);
 
     const getActivities = async (page) => {
-        setLoading(true)
-        setError('')
+        setLoading(true);
+        setError('');
         try {
-            const res = await apiClient.get(`/admin/activities/?page=${page}`)
-            setActivities(res.data.results)
+            const res = await apiClient.get(`/admin/activities/?page=${page}`);
+            setActivities(res.data.results);
             setPagination({
                 count: res.data.count,
                 next: res.data.next,
                 previous: res.data.previous
-            })
-            setTotalPages(Math.ceil(res.data.count / 10)) // Assuming 10 items per page
+            });
+            setTotalPages(Math.ceil(res.data.count / 10));
         } catch (err) {
-            setError(err.message || 'Failed to fetch activities')
+            setError(err.message || 'Failed to fetch activities');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber)
+        setCurrentPage(pageNumber);
+    };
+
+    if (loading) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <CircleLoader fullScreen={false} />
+            </div>
+        );
     }
 
+    if (error) {
+        return (
+            <div className="p-6 lg:p-8">
+                <ErrorMsg message={error} />
+            </div>
+        );
+    }
+
+    const columns = [
+        {
+            header: 'Action Type',
+            key: 'action_type',
+            render: (activity) => (
+                <Badge variant="primary">{activity.action_type}</Badge>
+            )
+        },
+        {
+            header: 'Message',
+            key: 'message',
+            render: (activity) => (
+                <div className="text-gray-900">{activity.message}</div>
+            )
+        },
+        {
+            header: 'User',
+            key: 'user_username',
+            render: (activity) => (
+                <div className="font-medium text-gray-700">{activity.user_username}</div>
+            )
+        },
+        {
+            header: 'Timestamp',
+            key: 'timestamp',
+            render: (activity) => (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <FaClock className="text-gray-400" />
+                    {new Date(activity.timestamp).toLocaleString()}
+                </div>
+            )
+        }
+    ];
+
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
             <div className="max-w-7xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">User Activities</h1>
-                    <BackBtn to="/admin/dashboard" children="Go Back" />
+                {/* Page Header */}
+                <div className="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">User Activities</h1>
+                        <p className="text-gray-600">View all user actions and system activities</p>
+                    </div>
+                    <Link to="/admin/dashboard">
+                        <Button variant="secondary">Back to Dashboard</Button>
+                    </Link>
                 </div>
 
-                {loading ? (
-                    <div className="w-full h-[80vh] flex justify-center py-12">
-                        <CircleLoader fullScreen={false} />
-                    </div>
-                ) : error ? (
-                    <ErrorMsg message={error} />
-                ) : (
-                    <>
-                        <div className="bg-white rounded-lg shadow overflow-hidden">
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action Type</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {activities.map((activity) => (
-                                            <tr key={activity.id} className="hover:bg-gray-50 transition-colors">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">{activity.action_type}</td>
-                                                <td className="px-6 py-4 whitespace-normal text-sm text-gray-900">{activity.message}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{activity.user_username}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(activity.timestamp).toLocaleString()}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                {/* Activities Table */}
+                <Card>
+                    <Table
+                        columns={columns}
+                        data={activities}
+                        emptyMessage="No activities found"
+                    />
 
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={handlePageChange} />
-                    </>
-                )}
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="mt-6 pt-4 border-t border-gray-200">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        </div>
+                    )}
+                </Card>
             </div>
         </div>
-    )
+    );
 }

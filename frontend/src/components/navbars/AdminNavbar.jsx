@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext.jsx";
-import { FaUserCircle, FaBars, FaTimes, FaTachometerAlt, FaUsers, FaCog, FaSignOutAlt, FaChalkboardTeacher, FaBook, FaGraduationCap } from 'react-icons/fa';
+import {
+  FaUserCircle,
+  FaBars,
+  FaTimes,
+  FaTachometerAlt,
+  FaUsers,
+  FaSignOutAlt,
+  FaGraduationCap,
+  FaBook,
+  FaChartLine
+} from 'react-icons/fa';
+import Button from '../common/Button.jsx';
 
 export default function AdminNavbar() {
   const navigate = useNavigate();
@@ -18,138 +29,131 @@ export default function AdminNavbar() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Helper function to check if a link is active
   const isActive = (path) => {
     return location.pathname === path;
   };
 
+  const navItems = [
+    { path: '/admin/dashboard', icon: FaTachometerAlt, label: 'Dashboard' },
+    { path: '/admin/users', icon: FaUsers, label: 'Users' },
+    { path: '/admin/classes', icon: FaGraduationCap, label: 'Classes' },
+    { path: '/admin/subjects', icon: FaBook, label: 'Subjects' },
+    { path: '/admin/activities', icon: FaChartLine, label: 'Activities' },
+  ];
+
   return (
     <>
       {/* Top Navbar - Fixed */}
-      <div className="pb-20 bg-gray-100"></div>
-      <header className="fixed top-0 left-0 right-0 flex justify-between items-center bg-white shadow-md p-4 z-40">
-        <button onClick={toggleSidebar} className="text-gray-700 focus:outline-none">
-          <FaBars className="h-6 w-6" />
-        </button>
-        <h1 className="text-2xl font-bold text-indigo-600 md:ml-0 ml-4">Admin Dashboard</h1>
-        <div className="flex items-center space-x-4">
-          <span className="text-gray-600 font-medium flex items-center">
-            <FaUserCircle className="mr-2 text-xl" /> Admin
-          </span>
-          <button
-            onClick={handleLogout}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition hidden md:block"
-          >
-            Logout
-          </button>
+      <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-40">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Left Section: Menu Button + Logo */}
+            <div className="flex items-center gap-4">
+              {/* Menu Button - Works on all screen sizes */}
+              <button
+                onClick={toggleSidebar}
+                className="text-gray-700 hover:text-gray-900 focus:outline-none p-2 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <FaBars className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                <div className="bg-indigo-600 p-2 rounded-lg">
+                  <FaGraduationCap className="text-white text-lg" />
+                </div>
+                <div className="hidden sm:block">
+                  <h1 className="text-lg font-bold text-gray-900">Admin Panel</h1>
+                  <p className="text-xs text-gray-500">Excellence Institute</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Section: User Info + Logout */}
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2 text-gray-700">
+                <FaUserCircle className="text-xl text-gray-400" />
+                <span className="text-sm font-medium">Administrator</span>
+              </div>
+              <Button
+                variant="danger"
+                onClick={handleLogout}
+                className="hidden md:flex"
+              >
+                Logout
+              </Button>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Sidebar - Closed by default */}
+      {/* Spacer for fixed header */}
+      <div className="h-16"></div>
+
+      {/* Sidebar - Works the same on all screen sizes */}
       <div
-        className={`fixed inset-y-0 left-0 transform ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-200 ease-in-out bg-gray-800 text-white w-64 p-4 z-50`}
+        className={`fixed inset-y-0 left-0 top-16 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } transition-transform duration-300 ease-in-out bg-white border-r border-gray-200 w-64 z-50`}
       >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">AdminPanel</h2>
-          <button onClick={toggleSidebar} className="text-white focus:outline-none">
-            <FaTimes className="h-6 w-6" />
-          </button>
+        <div className="h-full flex flex-col">
+          {/* Sidebar Header */}
+          <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
+            <h2 className="text-lg font-bold text-gray-900">Menu</h2>
+            <button
+              onClick={toggleSidebar}
+              className="text-gray-700 hover:text-gray-900 focus:outline-none p-2"
+            >
+              <FaTimes className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="flex-1 overflow-y-auto py-4 px-3">
+            <ul className="space-y-1">
+              {navItems.map((item) => (
+                <li key={item.path}>
+                  <button
+                    onClick={() => {
+                      navigate(item.path);
+                      setIsSidebarOpen(false);
+                    }}
+                    className={`flex items-center w-full px-4 py-3 rounded-md text-sm font-medium transition-colors ${isActive(item.path)
+                        ? 'bg-indigo-50 text-indigo-700'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                  >
+                    <item.icon className={`mr-3 h-5 w-5 ${isActive(item.path) ? 'text-indigo-600' : 'text-gray-400'
+                      }`} />
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Sidebar Footer - Logout (Mobile only) */}
+          <div className="border-t border-gray-200 p-4 lg:hidden">
+            <Button
+              variant="danger"
+              onClick={() => {
+                handleLogout();
+                setIsSidebarOpen(false);
+              }}
+              className="w-full justify-center"
+              icon={<FaSignOutAlt />}
+            >
+              Logout
+            </Button>
+          </div>
         </div>
-        <nav>
-          <ul>
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  navigate("/admin/dashboard");
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center py-2 px-4 rounded w-full text-left ${
-                  isActive("/admin/dashboard")
-                    ? 'bg-indigo-600 text-white'
-                    : 'hover:bg-gray-700'
-                }`}
-              >
-                <FaTachometerAlt className="mr-3" /> Dashboard
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  navigate("/admin/users");
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center py-2 px-4 rounded w-full text-left ${
-                  isActive("/admin/users")
-                    ? 'bg-indigo-600 text-white'
-                    : 'hover:bg-gray-700'
-                }`}
-              >
-                <FaUsers className="mr-3" /> Users
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  navigate("/admin/classes");
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center py-2 px-4 rounded w-full text-left ${
-                  isActive("/admin/classes")
-                    ? 'bg-indigo-600 text-white'
-                    : 'hover:bg-gray-700'
-                }`}
-              >
-                <FaGraduationCap className="mr-3" /> Classes
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  navigate("/admin/subjects");
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center py-2 px-4 rounded w-full text-left ${
-                  isActive("/admin/subjects")
-                    ? 'bg-indigo-600 text-white'
-                    : 'hover:bg-gray-700'
-                }`}
-              >
-                <FaBook className="mr-3" /> Subjects
-              </button>
-            </li>
-           
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  navigate("/admin/settings");
-                  setIsSidebarOpen(false);
-                }}
-                className={`flex items-center py-2 px-4 rounded w-full text-left ${
-                  isActive("/admin/settings")
-                    ? 'bg-indigo-600 text-white'
-                    : 'hover:bg-gray-700'
-                }`}
-              >
-                <FaCog className="mr-3" /> Settings
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsSidebarOpen(false);
-                }}
-                className="flex items-center py-2 px-4 rounded hover:bg-gray-700 w-full text-left text-red-400"
-              >
-                <FaSignOutAlt className="mr-3" /> Logout
-              </button>
-            </li>
-          </ul>
-        </nav>
       </div>
 
+      {/* Overlay for mobile only */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
     </>
   );
 }

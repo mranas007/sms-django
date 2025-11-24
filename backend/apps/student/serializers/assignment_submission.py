@@ -9,6 +9,9 @@ class AssignmentSubmissionListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "assignment",
+            "assignment_title",
+            "subject_name",
+            "subject_code",
             "student",
             "content",
             "file_upload",
@@ -16,6 +19,10 @@ class AssignmentSubmissionListSerializer(serializers.ModelSerializer):
             "grade",
             "submitted_at",
         ]
+
+    assignment_title = serializers.ReadOnlyField(source="assignment.title")
+    subject_name = serializers.ReadOnlyField(source="assignment.subject.name")
+    subject_code = serializers.ReadOnlyField(source="assignment.subject.code")
 
 class AssignmentSubmissionCreateSerializer(serializers.ModelSerializer):
     class Meta:

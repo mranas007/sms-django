@@ -1,19 +1,31 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext.jsx";
-
+import Button from "../common/Button.jsx";
 
 export default function TeacherNavbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuthContext();
+
   const handleLogout = () => {
-    logout()
+    logout();
     navigate("/login");
   };
 
+  const isActive = (path) => location.pathname === path;
+
+  const navLinks = [
+    { name: "Dashboard", path: "/teacher/dashboard" },
+    { name: "Classes", path: "/teacher/classes" },
+    { name: "Students", path: "/teacher/students" },
+    { name: "Assignments", path: "/teacher/assignments" },
+    { name: "Submissions", path: "/teacher/assignment-submissions" },
+  ];
+
   return (
-    <nav className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -21,61 +33,47 @@ export default function TeacherNavbar() {
             className="flex items-center cursor-pointer"
             onClick={() => navigate("/teacher/dashboard")}
           >
-            <h1 className="text-2xl font-bold text-indigo-600">TeacherPanel</h1>
+            <span className="text-xl font-bold text-gray-900 tracking-tight">
+              SMS <span className="text-indigo-600">Teacher</span>
+            </span>
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex space-x-8">
-            <button
-              onClick={() => navigate("/teacher/dashboard")}
-              className="text-gray-700 hover:text-indigo-600 font-medium"
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => navigate("/teacher/classes")}
-              className="text-gray-700 hover:text-indigo-600 font-medium"
-            >
-              Classes
-            </button>
-            <button
-              onClick={() => navigate("/teacher/students")}
-              className="text-gray-700 hover:text-indigo-600 font-medium"
-            >
-              Students
-            </button>
-            <button
-              onClick={() => navigate("/teacher/assignments")}
-              className="text-gray-700 hover:text-indigo-600 font-medium"
-            >
-              Assignments
-            </button>
-            <button
-              onClick={() => navigate("/teacher/assignment-submissions")}
-              className="text-gray-700 hover:text-indigo-600 font-medium"
-            >
-              Assignment Submissions
-            </button>
+          <div className="hidden md:flex space-x-1">
+            {navLinks.map((link) => (
+              <button
+                key={link.path}
+                onClick={() => navigate(link.path)}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(link.path)
+                    ? "text-indigo-600 bg-indigo-50"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+              >
+                {link.name}
+              </button>
+            ))}
           </div>
 
           {/* Right */}
           <div className="hidden md:flex items-center space-x-4">
-            <span className="text-gray-600 font-medium">Teacher</span>
-            <button
-              onClick={handleLogout}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
-            >
+            <Button variant="secondary" onClick={handleLogout} className="text-sm">
               Logout
-            </button>
+            </Button>
           </div>
 
           {/* Mobile Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-700 text-2xl font-bold focus:outline-none"
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
             >
-              {menuOpen ? "✕" : "☰"}
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {menuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
             </button>
           </div>
         </div>
@@ -83,57 +81,38 @@ export default function TeacherNavbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-md">
-          <div className="px-4 pt-2 pb-3 space-y-2">
-            <button
-              onClick={() => {
-                navigate("/teacher/dashboard");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left text-gray-700 hover:text-blue-800 font-medium"
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => {
-                navigate("/teacher/classes");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left text-gray-700 hover:text-blue-800 font-medium"
-            >
-              Classes
-            </button>
-            <button
-              onClick={() => {
-                navigate("/teacher/students");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left text-gray-700 hover:text-blue-800 font-medium"
-            >
-              Students
-            </button>
-            <button
-              onClick={() => {
-                navigate("/teacher/assignments");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left text-gray-700 hover:text-blue-800 font-medium"
-            >
-              Assignments
-            </button>
-            <hr className="border-gray-300" />
-            <button
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left text-red-600 font-semibold"
-            >
-              Logout
-            </button>
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navLinks.map((link) => (
+              <button
+                key={link.path}
+                onClick={() => {
+                  navigate(link.path);
+                  setMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${isActive(link.path)
+                    ? "text-indigo-600 bg-indigo-50"
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+              >
+                {link.name}
+              </button>
+            ))}
+            <div className="pt-4 border-t border-gray-200 mt-2">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+                className="block w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       )}
     </nav>
   );
 }
+

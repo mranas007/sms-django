@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FaClipboardList, FaUser, FaCalendarAlt, FaBook, FaCheckCircle, FaClock, FaSearch, FaFilter, FaStar, FaEye } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../../../services/Api';
 import CircleLoader from '../../../components/CircleLoader';
 import BackBtn from '../../../components/BackBtn';
+import Card from '../../../components/common/Card';
+import Table from '../../../components/common/Table';
+import Badge from '../../../components/common/Badge';
+import Button from '../../../components/common/Button';
 
 export default function StudentSubmittedAssignments() {
   const [loading, setLoading] = useState(false);
@@ -12,6 +16,7 @@ export default function StudentSubmittedAssignments() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterGraded, setFilterGraded] = useState('all'); // all, graded, ungraded
   const [sortBy, setSortBy] = useState('submittedDate'); // submittedDate, studentName, assignmentTitle
+  const navigate = useNavigate();
 
   // Fetch submissions
   const fetchSubmissions = async () => {
@@ -110,118 +115,173 @@ export default function StudentSubmittedAssignments() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <CircleLoader />
+      <div className="w-full h-screen flex items-center justify-center">
+        <CircleLoader fullScreen={false} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto space-y-4">
           <BackBtn />
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mt-4">
-            <strong className="font-bold">Error! </strong>
-            <span className="block sm:inline">{error}</span>
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+            <p className="text-sm text-red-700">{error}</p>
           </div>
         </div>
       </div>
     );
   }
 
+  const columns = [
+    {
+      header: 'Student',
+      accessor: (submission) => (
+        <div className="flex items-center gap-3">
+          <div className="bg-indigo-100 text-indigo-700 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm">
+            {getInitials(submission.student?.full_name)}
+          </div>
+          <div>
+            <p className="font-medium text-gray-900">{submission.student?.full_name || 'Unknown'}</p>
+            <p className="text-xs text-gray-500">@{submission.student?.username}</p>
+          </div>
+        </div>
+      )
+    },
+    {
+      header: 'Assignment',
+      accessor: (submission) => (
+        <div>
+          <p className="font-medium text-gray-900">{submission.assignment?.title || 'Unknown'}</p>
+          <p className="text-xs text-gray-500">{submission.assignment?.subject?.name}</p>
+        </div>
+      )
+    },
+    {
+      header: 'Submitted',
+      accessor: (submission) => (
+        <div>
+          <p className="text-sm text-gray-900">{formatDate(submission.submitted_at)}</p>
+          <p className="text-xs text-gray-500">{getTimeSinceSubmission(submission.submitted_at)}</p>
+        </div>
+      )
+    },
+    {
+      header: 'Status',
+      accessor: (submission) => (
+        <Badge variant={submission.grade !== null ? 'success' : 'warning'}>
+          {submission.grade !== null ? `Graded: ${submission.grade}` : 'Pending Review'}
+        </Badge>
+      )
+    },
+    {
+      header: 'Actions',
+      accessor: (submission) => (
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => navigate(`/teacher/assignment-submissions/${submission.id}`)}
+        >
+          View & Grade
+        </Button>
+      )
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-    
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <BackBtn />
+
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-lg mt-4 overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white">
-            <div className="flex items-center gap-4">
-              <div className="text-indigo-600 bg-white bg-opacity-20 p-4 rounded-lg">
-                <FaClipboardList className="text-4xl" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold">Student Submissions</h1>
-                <p className="text-indigo-100 text-lg mt-1">Review and grade student assignments</p>
-              </div>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="bg-indigo-100 p-3 rounded-lg">
+            <FaClipboardList className="text-indigo-600 text-2xl" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Student Submissions</h1>
+            <p className="text-gray-500">Review and grade student assignments.</p>
           </div>
         </div>
 
         {/* Stats Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-indigo-500">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-indigo-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Total Submissions</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{totalSubmissions}</p>
+                <p className="text-sm font-medium text-gray-500">Total Submissions</p>
+                <p className="text-2xl font-bold text-gray-900">{totalSubmissions}</p>
               </div>
-              <div className="bg-indigo-100 p-4 rounded-lg">
-                <FaClipboardList className="text-indigo-600 text-2xl" />
+              <div className="p-3 bg-indigo-50 rounded-full">
+                <FaClipboardList className="text-indigo-600 text-xl" />
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
+          <Card className="border-l-4 border-l-green-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Graded</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{gradedCount}</p>
+                <p className="text-sm font-medium text-gray-500">Graded</p>
+                <p className="text-2xl font-bold text-gray-900">{gradedCount}</p>
               </div>
-              <div className="bg-green-100 p-4 rounded-lg">
-                <FaCheckCircle className="text-green-600 text-2xl" />
+              <div className="p-3 bg-green-50 rounded-full">
+                <FaCheckCircle className="text-green-600 text-xl" />
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500">
+          <Card className="border-l-4 border-l-orange-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Pending Review</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{ungradedCount}</p>
+                <p className="text-sm font-medium text-gray-500">Pending Review</p>
+                <p className="text-2xl font-bold text-gray-900">{ungradedCount}</p>
               </div>
-              <div className="bg-orange-100 p-4 rounded-lg">
-                <FaClock className="text-orange-600 text-2xl" />
+              <div className="p-3 bg-orange-50 rounded-full">
+                <FaClock className="text-orange-600 text-xl" />
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+          <Card className="border-l-4 border-l-blue-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Average Grade</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{avgGrade || 'N/A'}</p>
+                <p className="text-sm font-medium text-gray-500">Average Grade</p>
+                <p className="text-2xl font-bold text-gray-900">{avgGrade || 'N/A'}</p>
               </div>
-              <div className="bg-blue-100 p-4 rounded-lg">
-                <FaStar className="text-blue-600 text-2xl" />
+              <div className="p-3 bg-blue-50 rounded-full">
+                <FaStar className="text-blue-600 text-xl" />
               </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
+        <Card>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaSearch className="text-gray-400" />
+              </div>
               <input
                 type="text"
                 placeholder="Search by student or assignment..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                className="block w-full pl-10 sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 py-2.5"
               />
             </div>
 
             {/* Filter by Graded Status */}
             <div className="relative">
-              <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaFilter className="text-gray-400" />
+              </div>
               <select
                 value={filterGraded}
                 onChange={(e) => setFilterGraded(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 appearance-none bg-white"
+                className="block w-full pl-10 sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 py-2.5"
               >
                 <option value="all">All Submissions</option>
                 <option value="graded">Graded</option>
@@ -234,7 +294,7 @@ export default function StudentSubmittedAssignments() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 appearance-none bg-white"
+                className="block w-full sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 py-2.5"
               >
                 <option value="submittedDate">Sort by Submission Date</option>
                 <option value="studentName">Sort by Student Name</option>
@@ -242,128 +302,15 @@ export default function StudentSubmittedAssignments() {
               </select>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Submissions List */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">Submissions List</h3>
-
-          {filteredSubmissions.length === 0 ? (
-            <div className="text-center py-12">
-              <FaClipboardList className="text-gray-300 text-6xl mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">
-                {searchTerm || filterGraded !== 'all'
-                  ? 'No submissions found matching your criteria'
-                  : 'No submissions yet'}
-              </p>
-              <p className="text-gray-400 text-sm mt-2">
-                {searchTerm || filterGraded !== 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'Student submissions will appear here'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredSubmissions.map((submission) => (
-                <div
-                  key={submission.id}
-                  className={`border-2 rounded-xl p-6 hover:shadow-lg transition-all duration-300 ${submission.grade !== null
-                      ? 'bg-green-50 border-green-200'
-                      : 'bg-white border-gray-200'
-                    }`}
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    {/* Left Section - Student & Assignment Info */}
-                    <div className="flex-1">
-                      <div className="flex items-start gap-4">
-                        {/* Student Avatar */}
-                        <div className="bg-indigo-500 text-white w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
-                          {getInitials(submission.student?.full_name)}
-                        </div>
-
-                        {/* Details */}
-                        <div className="flex-1">
-                          {/* Student Name & Status Badge */}
-                          <div className="flex items-start justify-between gap-4 mb-2">
-                            <div>
-                              <h4 className="text-xl font-bold text-gray-800">
-                                {submission.student?.full_name || 'Unknown Student'}
-                              </h4>
-                              <p className="text-sm text-gray-600">@{submission.student?.username}</p>
-                            </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${submission.grade !== null
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-orange-100 text-orange-700'
-                                }`}
-                            >
-                              {submission.grade !== null ? `Graded: ${submission.grade}` : 'Pending Review'}
-                            </span>
-                          </div>
-
-                          {/* Assignment Title */}
-                          <div className="flex items-center gap-2 mb-3">
-                            <FaBook className="text-purple-500" />
-                            <p className="font-semibold text-gray-700">
-                              {submission.assignment?.title || 'Unknown Assignment'}
-                            </p>
-                          </div>
-
-                          {/* Meta Information */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {/* Submitted Date */}
-                            <div className="flex items-center gap-2 text-sm">
-                              <FaCalendarAlt className="text-blue-500" />
-                              <div>
-                                <p className="text-xs text-gray-500">Submitted</p>
-                                <p className="font-medium text-gray-700">
-                                  {formatDate(submission.submitted_at)}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  {getTimeSinceSubmission(submission.submitted_at)}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Student Contact */}
-                            <div className="flex items-center gap-2 text-sm">
-                              <FaUser className="text-green-500" />
-                              <div>
-                                <p className="text-xs text-gray-500">Contact</p>
-                                <p className="font-medium text-gray-700">
-                                  {submission.student?.email || 'N/A'}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Feedback Preview */}
-                          {submission.feedback && (
-                            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                              <p className="text-xs text-blue-600 font-semibold mb-1">Your Feedback:</p>
-                              <p className="text-sm text-gray-700 line-clamp-2">{submission.feedback}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Section - Actions */}
-                    <div className="flex lg:flex-col gap-2">
-                      <Link
-                        to={`/teacher/assignment-submissions/${submission.id}`}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium text-center whitespace-nowrap flex items-center justify-center gap-2"
-                      >
-                        <FaEye />
-                        View & Grade
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <Table
+          headers={['Student', 'Assignment', 'Submitted', 'Status', 'Actions']}
+          data={filteredSubmissions}
+          columns={columns}
+          emptyMessage="No submissions found matching your criteria."
+        />
       </div>
     </div>
   );

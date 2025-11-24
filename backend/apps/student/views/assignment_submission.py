@@ -9,8 +9,8 @@ from apps.student.serializers.assignment_submission import (
 class AssignmentSubmissionListCreateView(generics.ListCreateAPIView):
     queryset = AssignmentSubmission.objects.all()
     permission_classes = [IsAuthenticated]
-    # serializer_class = AssignmentSubmissionListSerializer
-
+    allowed_roles = ['Student', 'Admin']
+    
     def get_serializer_class(self):
         if self.request.method == "POST":
             return AssignmentSubmissionCreateSerializer

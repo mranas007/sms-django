@@ -3,6 +3,8 @@ import { FaBook, FaUsers, FaChalkboardTeacher, FaCalendarAlt, FaClock, FaGraduat
 import apiClient from '../../../services/Api';
 import CircleLoader from '../../../components/CircleLoader';
 import BackBtn from '../../../components/BackBtn';
+import Card from '../../../components/common/Card';
+import Badge from '../../../components/common/Badge';
 
 export default function ClassDetail() {
     const [loading, setLoading] = useState(false);
@@ -53,235 +55,171 @@ export default function ClassDetail() {
         return colors[index % colors.length];
     };
 
-    if (loading) return <div className="h-screen w-full flex items-center justify-center"><CircleLoader /></div>;
-    if (error) return <p className="text-red-600 text-center mt-8">{error}</p>;
-    if (!classData) return <p className="text-gray-600 text-center mt-8">No class data available</p>;
+    if (loading) return (
+        <div className="w-full h-screen flex items-center justify-center">
+            <CircleLoader fullScreen={false} />
+        </div>);
+        
+    if (error) return <div className="p-6 text-red-600 bg-red-50">{error}</div>;
+    if (!classData) return <div className="p-6 text-gray-600 bg-gray-50 text-center">No class data available</div>;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gray-50 p-6">
+            <div className="max-w-7xl mx-auto space-y-6">
                 <BackBtn />
 
                 {/* Header Section */}
-                <div className="bg-white rounded-xl shadow-lg mt-4 overflow-hidden">
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="text-indigo-600 bg-white bg-opacity-20 p-4 rounded-lg">
-                                <FaGraduationCap className="text-4xl" />
-                            </div>
-                            <div>
-                                <h1 className="text-4xl font-bold">{classData.name}</h1>
-                                <p className="text-indigo-100 text-lg mt-1">My Class Information</p>
-                            </div>
-                        </div>
-
-                        {/* Quick Stats */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-indigo-600">
-                            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <FaCalendarAlt className="text-xl" />
-                                    <p className="text-sm opacity-90">Academic Year</p>
-                                </div>
-                                <p className="text-xl font-bold">{classData.academic_year}</p>
-                            </div>
-                            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <FaBook className="text-xl" />
-                                    <p className="text-sm opacity-90">Subjects</p>
-                                </div>
-                                <p className="text-xl font-bold">{classData.subjects?.length || 0}</p>
-                            </div>
-                            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <FaUsers className="text-xl" />
-                                    <p className="text-sm opacity-90">Classmates</p>
-                                </div>
-                                <p className="text-xl font-bold">{classData.students?.length || 0}</p>
-                            </div>
-                            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <FaChalkboardTeacher className="text-xl" />
-                                    <p className="text-sm opacity-90">Teachers</p>
-                                </div>
-                                <p className="text-xl font-bold">{classData.teachers?.length || 0}</p>
-                            </div>
-                        </div>
+                <div className="flex items-center gap-3">
+                    <div className="bg-indigo-100 p-3 rounded-lg">
+                        <FaGraduationCap className="text-indigo-600 text-2xl" />
                     </div>
-
-                    {/* Schedule Section */}
-                    <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-indigo-100 p-3 rounded-lg">
-                                <FaClock className="text-indigo-600 text-2xl" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600 font-medium">Class Schedule</p>
-                                <p className="text-xl font-bold text-gray-800">{classData.schedule}</p>
-                            </div>
-                        </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{classData.name}</h1>
+                        <p className="text-gray-500">My Class Information</p>
                     </div>
                 </div>
 
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    {/* Subjects Section */}
-                    <div className="bg-white rounded-xl shadow-sm p-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="bg-purple-100 p-3 rounded-lg">
-                                <FaBook className="text-purple-600 text-xl" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-800">Subjects</h2>
+                {/* Quick Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Card className="border-l-4 border-l-indigo-500">
+                        <div className="flex items-center gap-2 mb-1">
+                            <FaCalendarAlt className="text-indigo-500" />
+                            <p className="text-xs text-gray-500 font-medium">Academic Year</p>
                         </div>
+                        <p className="text-lg font-bold text-gray-900">{classData.academic_year}</p>
+                    </Card>
+                    <Card className="border-l-4 border-l-purple-500">
+                        <div className="flex items-center gap-2 mb-1">
+                            <FaBook className="text-purple-500" />
+                            <p className="text-xs text-gray-500 font-medium">Subjects</p>
+                        </div>
+                        <p className="text-lg font-bold text-gray-900">{classData.subjects?.length || 0}</p>
+                    </Card>
+                    <Card className="border-l-4 border-l-green-500">
+                        <div className="flex items-center gap-2 mb-1">
+                            <FaUsers className="text-green-500" />
+                            <p className="text-xs text-gray-500 font-medium">Classmates</p>
+                        </div>
+                        <p className="text-lg font-bold text-gray-900">{classData.students?.length || 0}</p>
+                    </Card>
+                    <Card className="border-l-4 border-l-blue-500">
+                        <div className="flex items-center gap-2 mb-1">
+                            <FaChalkboardTeacher className="text-blue-500" />
+                            <p className="text-xs text-gray-500 font-medium">Teachers</p>
+                        </div>
+                        <p className="text-lg font-bold text-gray-900">{classData.teachers?.length || 0}</p>
+                    </Card>
+                </div>
 
+                {/* Schedule Section */}
+                <Card>
+                    <div className="flex items-center gap-3">
+                        <div className="bg-indigo-50 p-2 rounded-full">
+                            <FaClock className="text-indigo-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-500 font-medium">Class Schedule</p>
+                            <p className="text-lg font-bold text-gray-900">{classData.schedule}</p>
+                        </div>
+                    </div>
+                </Card>
+
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Subjects Section */}
+                    <Card title="Subjects" icon={<FaBook className="text-purple-600" />}>
                         {classData.subjects && classData.subjects.length > 0 ? (
                             <div className="space-y-3">
                                 {classData.subjects.map((subject, index) => (
                                     <div
                                         key={subject.id}
-                                        className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors"
                                     >
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <div className="bg-purple-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">
-                                                    {index + 1}
-                                                </div>
-                                                <div>
-                                                    <h3 className="font-bold text-gray-800 text-lg">{subject.name}</h3>
-                                                    <p className="text-sm text-purple-600 font-medium">Code: {subject.code}</p>
-                                                </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-purple-100 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">
+                                                {index + 1}
                                             </div>
-                                            <FaBook className="text-purple-400 text-2xl" />
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900">{subject.name}</h3>
+                                                <p className="text-xs text-gray-500">Code: {subject.code}</p>
+                                            </div>
                                         </div>
+                                        <Badge variant="info">Subject</Badge>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-gray-500 text-center py-8">No subjects assigned</p>
+                            <p className="text-gray-500 text-center py-8 text-sm">No subjects assigned</p>
                         )}
-                    </div>
+                    </Card>
 
                     {/* Teachers Section */}
-                    <div className="bg-white rounded-xl shadow-sm p-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="bg-blue-100 p-3 rounded-lg">
-                                <FaChalkboardTeacher className="text-blue-600 text-xl" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-800">Teachers</h2>
-                        </div>
-
+                    <Card title="Teachers" icon={<FaChalkboardTeacher className="text-blue-600" />}>
                         {classData.teachers && classData.teachers.length > 0 ? (
                             <div className="space-y-3">
                                 {classData.teachers.map((teacher, index) => (
                                     <div
                                         key={teacher.id}
-                                        className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                        className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors"
                                     >
-                                        <div className="flex items-start gap-3">
-                                            <div className={`${getAvatarColor(index)} text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0`}>
-                                                {getInitials(teacher.full_name)}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-gray-800 text-lg">{teacher.full_name}</h3>
-                                                <p className="text-sm text-gray-600">@{teacher.username}</p>
-                                                {teacher.email && (
-                                                    <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
-                                                        <FaEnvelope className="text-blue-500" />
-                                                        <span className="truncate">{teacher.email}</span>
-                                                    </div>
-                                                )}
-                                                {teacher.phone_number && (
-                                                    <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
-                                                        <FaPhone className="text-green-500" />
-                                                        <span>{teacher.phone_number}</span>
-                                                    </div>
-                                                )}
-                                            </div>
+                                        <div className={`${getAvatarColor(index)} text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0`}>
+                                            {getInitials(teacher.full_name)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-gray-900">{teacher.full_name}</h3>
+                                            <p className="text-xs text-gray-500">@{teacher.username}</p>
+                                            {teacher.email && (
+                                                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                                                    <FaEnvelope className="text-blue-400" />
+                                                    <span className="truncate">{teacher.email}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-gray-500 text-center py-8">No teachers assigned</p>
+                            <p className="text-gray-500 text-center py-8 text-sm">No teachers assigned</p>
                         )}
-                    </div>
+                    </Card>
                 </div>
 
                 {/* Classmates Section */}
-                <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="bg-green-100 p-3 rounded-lg">
-                            <FaUserGraduate className="text-green-600 text-xl" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800">My Classmates</h2>
-                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            {classData.students?.length || 0} Students
-                        </span>
-                    </div>
-
+                <Card
+                    title="My Classmates"
+                    icon={<FaUserGraduate className="text-green-600" />}
+                    action={<Badge variant="success">{classData.students?.length || 0} Students</Badge>}
+                >
                     {classData.students && classData.students.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {classData.students.map((student, index) => (
                                 <div
                                     key={student.id}
-                                    className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-300"
+                                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:shadow-sm transition-all"
                                 >
-                                    <div className="flex items-start gap-3">
-                                        <div className={`${getAvatarColor(index)} text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0`}>
-                                            {getInitials(student.full_name)}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-gray-800">{student.full_name}</h3>
-                                            <p className="text-sm text-gray-500">@{student.username}</p>
-
-                                            {/* <div className="mt-3 space-y-1">
-                                                {student.email && (
-                                                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                        <FaEnvelope className="text-blue-500 flex-shrink-0" />
-                                                        <span className="truncate">{student.email}</span>
-                                                    </div>
-                                                )}
-                                                {student.phone_number && (
-                                                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                        <FaPhone className="text-green-500 flex-shrink-0" />
-                                                        <span>{student.phone_number}</span>
-                                                    </div>
-                                                )}
-                                                {student.address && (
-                                                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                        <FaMapMarkerAlt className="text-red-500 flex-shrink-0" />
-                                                        <span className="truncate">{student.address}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {student.bio && (
-                                                <p className="text-xs text-gray-500 mt-2 line-clamp-2 italic">
-                                                    "{student.bio}"
-                                                </p>
-                                            )} */}
-                                        </div>
+                                    <div className={`${getAvatarColor(index)} text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0`}>
+                                        {getInitials(student.full_name)}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-gray-900 text-sm">{student.full_name}</h3>
+                                        <p className="text-xs text-gray-500">@{student.username}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-500 text-center py-8">No classmates found</p>
+                        <p className="text-gray-500 text-center py-8 text-sm">No classmates found</p>
                     )}
-                </div>
+                </Card>
 
                 {/* Class Info Footer */}
-                <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mt-6">
-                    <div className="flex items-center gap-2 text-sm text-indigo-600">
-                        <FaClock />
-                        <span>
-                            <span className="font-medium">Class created on:</span>{' '}
-                            {new Date(classData.timestamp).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
-                        </span>
-                    </div>
+                <div className="text-center text-xs text-gray-400 mt-6">
+                    <span className="font-medium">Class created on:</span>{' '}
+                    {new Date(classData.timestamp).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
                 </div>
             </div>
         </div>

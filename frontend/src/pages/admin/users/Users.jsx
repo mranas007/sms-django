@@ -1,26 +1,20 @@
 // REACT HOOKS
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaArrowCircleLeft, FaSearch, FaEdit, FaTrash, FaUserPlus, FaUserSlash } from 'react-icons/fa';
-import { Link } from 'react-router-dom'
+import { FaSearch, FaEdit, FaUserPlus, FaUserSlash, FaInfoCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
+// SERVICES & UTILS
 import Api from '../../../services/Api';
+import { useSearchParams } from 'react-router-dom';
+
+// COMPONENTS
+import Card from '../../../components/common/Card.jsx';
+import Button from '../../../components/common/Button.jsx';
+import Badge from '../../../components/common/Badge.jsx';
+import Table from '../../../components/common/Table.jsx';
 import CircleLoader from '../../../components/CircleLoader';
 import FailedCom from '../../../components/FailedCom';
-import { useParams, useSearchParams } from 'react-router-dom';
-import BackBtn from '../../../components/BackBtn'
 import DeleteConfirmation from '../../../components/DeleteConfirmation.jsx';
-
-
-const ConfirmationModal = ({ message, onConfirm, onCancel }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl">
-      <p className="mb-4">{message}</p>
-      <div className="flex justify-end space-x-4">
-        <button onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
-        <button onClick={onConfirm} className="px-4 py-2 bg-red-600 text-white rounded-md">Confirm</button>
-      </div>
-    </div>
-  </div>
-);
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -29,11 +23,10 @@ export default function Users() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [modal, setModal] = useState({ isOpen: false, message: '', onConfirm: null });
+  const [roleFilter, setRoleFilter] = useState('');
 
   const [searchParams] = useSearchParams();
   const role = searchParams.get('role');
-
 
   const getUsers = useCallback(async (page = 1, search = '', roleParam = '') => {
     try {
@@ -41,7 +34,6 @@ export default function Users() {
       setError(null);
       const roleQuery = roleParam ? `&role=${roleParam}` : '';
       const res = await Api.get(`admin/users/?page=${page}&search=${search}${roleQuery}`);
-      // console.log(res.data.results);
       setUsers(res.data.results || []);
       setTotalPages(Math.ceil(res.data.count / 10));
       setCurrentPage(page);
@@ -55,163 +47,252 @@ export default function Users() {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      getUsers(1, searchQuery, role);
-    }, 300); // Debounce search
+      getUsers(1, searchQuery, role || roleFilter);
+    }, 300);
     return () => clearTimeout(handler);
-  }, [searchQuery, getUsers, role]);
+  }, [searchQuery, roleFilter, getUsers, role]);
 
-  // DELETE ACTION
   const isDeleteSuccess = (success) => {
     if (success) {
-      getUsers(currentPage, searchQuery);
+      getUsers(currentPage, searchQuery, roleFilter);
     }
   };
 
-  // SELECT OPTION FOR FILTER
-  const hanldeFilter = (e)=>{
-    getUsers(1, searchQuery, e.target.value);
-  }
+  const handleRoleFilter = (e) => {
+    setRoleFilter(e.target.value);
+  };
 
-  // DEACTIVATE ACTION
   const deactivateAction = async (userId, action) => {
-   
-      try {
-        await Api.put(`admin/user/${userId}/`, {is_active: action});
-        getUsers(currentPage, searchQuery);
-      }catch(err){
-        console.error(err);
-        alert('Action failed.');
-      }
-  
+    try {
+      await Api.put(`admin/user/${userId}/`, { is_active: action });
+      getUsers(currentPage, searchQuery, roleFilter);
+    } catch (err) {
+      console.error(err);
+      alert('Action failed.');
+    }
+  };
+
+  if (loading && !users.length) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <CircleLoader fullScreen={false} />
+      </div>
+    );
   }
 
-  const closeModal = () => setModal({ isOpen: false, message: '', onConfirm: null });
+  if (error) {
+    return (
+      <div className="p-6 lg:p-8">
+        <FailedCom message={error} onRetry={() => getUsers(currentPage, searchQuery, roleFilter)} />
+      </div>
+    );
+  }
 
-  if (loading && !users.length) return <div className="h-screen w-full"><CircleLoader fullScreen={false} /></div>;
-  if (error) return <FailedCom message={error} onRetry={() => getUsers(currentPage, searchQuery)} />;
+  const columns = [
+    {
+      header: 'Username',
+      key: 'username',
+      render: (user) => (
+        <div className="font-medium text-gray-900">{user.username}</div>
+      )
+    },
+    {
+      header: 'Full Name',
+      key: 'full_name',
+      render: (user) => (
+        <div className="font-medium text-gray-900">{user.full_name}</div>
+      )
+    },
+    {
+      header: 'Email',
+      key: 'email',
+      render: (user) => (
+        <div className="text-gray-600">{user.email || '—'}</div>
+      )
+    },
+    {
+      header: 'Role',
+      key: 'role',
+      render: (user) => (
+        <Badge
+          variant={
+            user.role === 'Student' ? 'info' :
+              user.role === 'Teacher' ? 'primary' :
+                'default'
+          }
+        >
+          {user.role || '—'}
+        </Badge>
+      )
+    },
+    {
+      header: 'Joined',
+      key: 'date_joined',
+      render: (user) => (
+        <div className="text-sm text-gray-600">
+          {new Date(user.date_joined).toLocaleDateString()}
+        </div>
+      )
+    },
+    {
+      header: 'Status',
+      key: 'is_active',
+      render: (user) => (
+        <Badge variant={user.is_active ? 'success' : 'danger'}>
+          {user.is_active ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+    {
+      header: 'Actions',
+      key: 'actions',
+      render: (user) => (
+        <div className="flex items-center justify-center gap-2">
+          <Link
+            to={`/admin/user/${user.id}`}
+            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-md bg-gray-100 hover:bg-indigo-100 transition-colors"
+            aria-label="View user details"
+          >
+            <FaInfoCircle className="w-4 h-4 text-indigo-600" />
+            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              Info
+            </span>
+          </Link>
+
+          <Link
+            to={`/admin/users/${user.id}/update`}
+            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-md bg-gray-100 hover:bg-blue-100 transition-colors"
+            aria-label="Edit user"
+          >
+            <FaEdit className="w-4 h-4 text-blue-600" />
+            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              Edit
+            </span>
+          </Link>
+
+          <button
+            onClick={() => deactivateAction(user.id, !user.is_active)}
+            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-md bg-gray-100 hover:bg-yellow-100 transition-colors"
+            aria-label={user.is_active ? 'Deactivate user' : 'Activate user'}
+          >
+            {user.is_active ? (
+              <FaUserSlash className="w-4 h-4 text-yellow-600" />
+            ) : (
+              <FaUserPlus className="w-4 h-4 text-green-600" />
+            )}
+            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              {user.is_active ? 'Deactivate' : 'Activate'}
+            </span>
+          </button>
+
+          <DeleteConfirmation
+            deleteUrl={`/admin/user/${user.id}/`}
+            onDeleteSuccess={isDeleteSuccess}
+            itemName={user.full_name}
+            triggerType="icon"
+          />
+        </div>
+      )
+    }
+  ];
 
   return (
-    <>
-      {modal.isOpen && <ConfirmationModal message={modal.message} onConfirm={modal.onConfirm} onCancel={closeModal} />}
-      <div className="min-h-screen bg-gray-100 p-6 sm:p-8">
-        <div className="w-full">
-          <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-            <BackBtn />
-          </div>
-          <div className='flex items-center justify-end gap-2 my-2 w-full'>
-            <div>
-              <select onChange={hanldeFilter} className='p-2 border text-indigo-600 border-indigo-600 rounded'>
-                <option value="">All User</option>
-                <option value="Student">Students</option>
-                <option value="Teacher">Teachers</option>
-              </select>
-            </div>
-            <div className='relative'>
-              <input
-                type="text"
-                placeholder="Search by name or email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
-              />
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
-
-          {loading && <div className="h-screen w-full"><CircleLoader fullScreen={false} /></div>}
-          {!loading && users.length === 0 ? (
-            <p className="text-center text-gray-500 py-10">No users found.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{user.full_name}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{user.email || '—'}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{user.role || '—'}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{new Date(user.date_joined).toLocaleDateString()}</td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                          {user.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          {/* Info */}
-                          <Link to={`/admin/user/${user.id}`}
-                            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            aria-label="View user details">
-                            <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                              Info
-                            </span>
-                          </Link>
-
-                          {/* Edit */}
-                          <Link to={`/admin/users/${user.id}/update`}
-                            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            aria-label="Edit user" >
-                            <FaEdit className="w-4 h-4 text-blue-600" />
-                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                              Edit
-                            </span>
-                          </Link>
-
-                           {/* Activate / Deactivate */}
-                           <button
-                            onClick={() => deactivateAction(user.id, user.is_active ? false : true)}
-                            className="group relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            aria-label={user.is_active ? 'Deactivate user' : 'Activate user'}>
-                            {user.is_active
-                              ? <FaUserSlash className="w-4 h-4 text-yellow-600" />
-                              : <FaUserPlus className="w-4 h-4 text-green-600" />}
-                            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                              {user.is_active ? 'Deactivate' : 'Activate'}
-                            </span>
-                          </button>
-
-                          {/* Delete */}
-                          <DeleteConfirmation
-                            deleteUrl={`/admin/user/${user.id}/`}
-                            onDeleteSuccess={isDeleteSuccess}
-                            itemName={user.full_name}
-                            triggerType="icon" // or "button" (default)
-                          />
-
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div className="flex justify-between items-center mt-6">
-            <span className="text-sm text-gray-700">Page {currentPage} of {totalPages}</span>
-            <div className="flex space-x-2">
-              <button onClick={() => getUsers(currentPage - 1, searchQuery)} disabled={currentPage === 1} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md disabled:opacity-50">Previous</button>
-              <button onClick={() => getUsers(currentPage + 1, searchQuery)} disabled={currentPage === totalPages} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">Next</button>
-            </div>
-          </div>
+    <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
+          <p className="text-gray-600">Manage all users, students, and teachers</p>
         </div>
+
+        {/* Filters and Search */}
+        <Card className="mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 flex-1">
+              <div className="flex-1 sm:max-w-xs">
+                <label htmlFor="role-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                  Filter by Role
+                </label>
+                <select
+                  id="role-filter"
+                  onChange={handleRoleFilter}
+                  value={roleFilter}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">All Users</option>
+                  <option value="Student">Students</option>
+                  <option value="Teacher">Teachers</option>
+                </select>
+              </div>
+
+              <div className="flex-1 sm:max-w-md">
+                <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+                  Search
+                </label>
+                <div className="relative">
+                  <input
+                    id="search"
+                    type="text"
+                    placeholder="Search by name or email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            <Link to="/admin/user/add">
+              <Button variant="primary" icon={<FaUserPlus />}>
+                Add User
+              </Button>
+            </Link>
+          </div>
+        </Card>
+
+        {/* Users Table */}
+        <Card>
+          {loading ? (
+            <div className="py-12">
+              <CircleLoader fullScreen={false} />
+            </div>
+          ) : (
+            <>
+              <Table
+                columns={columns}
+                data={users}
+                emptyMessage="No users found"
+              />
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+                  <span className="text-sm text-gray-700">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => getUsers(currentPage - 1, searchQuery, roleFilter)}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => getUsers(currentPage + 1, searchQuery, roleFilter)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </Card>
       </div>
-    </>
+    </div>
   );
 }

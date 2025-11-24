@@ -5,6 +5,9 @@ import { FaUser, FaBook, FaCalendarAlt, FaClock, FaFileAlt, FaSave, FaCheckCircl
 import apiClient from '../../../services/Api';
 import BackBtn from '../../../components/BackBtn';
 import CircleLoader from '../../../components/CircleLoader';
+import Card from '../../../components/common/Card';
+import Button from '../../../components/common/Button';
+import Badge from '../../../components/common/Badge';
 
 export default function StudentSubmittedAssignmentDetail() {
     const { id } = useParams();
@@ -21,7 +24,6 @@ export default function StudentSubmittedAssignmentDetail() {
         try {
             setLoading(true);
             const res = await apiClient.get(`teacher/assignments/submissions/${id}/`);
-            console.log(res.data)
             setSubmission(res.data);
             // Pre-populate form if already graded
             if (res.data.grade) {
@@ -115,20 +117,19 @@ export default function StudentSubmittedAssignmentDetail() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                <CircleLoader />
-            </div>
+             <div className="w-full h-screen flex items-center justify-center">
+          <CircleLoader fullScreen={false}/>
+        </div>
         );
     }
 
     if (error && !submission) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-                <div className="max-w-5xl mx-auto">
+            <div className="min-h-screen bg-gray-50 p-6">
+                <div className="max-w-5xl mx-auto space-y-4">
                     <BackBtn />
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mt-4">
-                        <strong className="font-bold">Error! </strong>
-                        <span className="block sm:inline">{error}</span>
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                        <p className="text-sm text-red-700">{error}</p>
                     </div>
                 </div>
             </div>
@@ -137,11 +138,11 @@ export default function StudentSubmittedAssignmentDetail() {
 
     if (!submission) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-                <div className="max-w-5xl mx-auto">
+            <div className="min-h-screen bg-gray-50 p-6">
+                <div className="max-w-5xl mx-auto space-y-4">
                     <BackBtn />
-                    <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg mt-4">
-                        Submission not found
+                    <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-md">
+                        <p className="text-sm text-yellow-700">Submission not found</p>
                     </div>
                 </div>
             </div>
@@ -149,46 +150,40 @@ export default function StudentSubmittedAssignmentDetail() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-            <div className="max-w-5xl mx-auto">
+        <div className="min-h-screen bg-gray-50 p-6">
+            <div className="max-w-5xl mx-auto space-y-6">
                 <BackBtn />
 
                 {/* Header */}
-                <div className="bg-white rounded-xl shadow-lg mt-4 overflow-hidden">
-                    <div className={`p-6 text-white ${submission.grade !== null ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-indigo-600 to-purple-600'}`}>
-                        <div className="flex items-center gap-4">
-                            <div className="bg-white bg-opacity-20 p-4 rounded-lg">
-                                {submission.grade !== null ? (
-                                    <FaCheckCircle className="text-4xl" />
-                                ) : (
-                                    <FaFileAlt className="text-4xl" />
-                                )}
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-bold">Assignment Submission</h1>
-                                <p className="text-green-100 mt-1">
-                                    {submission.grade !== null ? `Graded: ${submission.grade}` : 'Pending Review'}
-                                </p>
-                            </div>
+                <div className="flex items-center gap-3">
+                    <div className="bg-indigo-100 p-3 rounded-lg">
+                        {submission.grade !== null ? (
+                            <FaCheckCircle className="text-green-600 text-2xl" />
+                        ) : (
+                            <FaFileAlt className="text-indigo-600 text-2xl" />
+                        )}
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Assignment Submission</h1>
+                        <div className="flex items-center gap-2 mt-1">
+                            <Badge variant={submission.grade !== null ? 'success' : 'warning'}>
+                                {submission.grade !== null ? `Graded: ${submission.grade}` : 'Pending Review'}
+                            </Badge>
                         </div>
                     </div>
                 </div>
 
                 {/* Student & Assignment Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Student Info Card */}
-                    <div className="bg-white rounded-xl shadow-sm p-6">
-                        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <FaUser className="text-indigo-600" />
-                            Student Information
-                        </h2>
+                    <Card title="Student Information" icon={<FaUser className="text-indigo-600" />}>
                         <div className="flex items-start gap-4">
-                            <div className="bg-indigo-500 text-white w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl flex-shrink-0">
+                            <div className="bg-indigo-100 text-indigo-700 w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl flex-shrink-0">
                                 {getInitials(submission.student?.full_name)}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-lg font-bold text-gray-800">{submission.student?.full_name}</h3>
-                                <p className="text-sm text-gray-600">@{submission.student?.username}</p>
+                                <h3 className="text-lg font-bold text-gray-900">{submission.student?.full_name}</h3>
+                                <p className="text-sm text-gray-500">@{submission.student?.username}</p>
                                 <div className="mt-3 space-y-1">
                                     {submission.student?.email && (
                                         <p className="text-sm text-gray-600">
@@ -203,46 +198,40 @@ export default function StudentSubmittedAssignmentDetail() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
                     {/* Assignment Info Card */}
-                    <div className="bg-white rounded-xl shadow-sm p-6">
-                        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <FaBook className="text-purple-600" />
-                            Assignment Details
-                        </h2>
-                        <div className="space-y-3">
+                    <Card title="Assignment Details" icon={<FaBook className="text-purple-600" />}>
+                        <div className="space-y-4">
                             <div>
                                 <p className="text-sm text-gray-500">Title</p>
-                                <p className="font-semibold text-gray-800">{submission.assignment?.title}</p>
+                                <p className="font-semibold text-gray-900">{submission.assignment?.title}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Due Date</p>
-                                <p className="font-medium text-gray-700 flex items-center gap-2">
+                                <p className="font-medium text-gray-900 flex items-center gap-2">
                                     <FaCalendarAlt className="text-blue-500" />
                                     {formatDate(submission.assignment?.due_date)}
                                 </p>
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Submitted</p>
-                                <p className="font-medium text-gray-700 flex items-center gap-2">
+                                <p className="font-medium text-gray-900 flex items-center gap-2">
                                     <FaClock className="text-green-500" />
                                     {formatDate(submission.submitted_at)}
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
 
                 {/* Assignment Description */}
-                <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Assignment Description</h2>
+                <Card title="Assignment Description">
                     <p className="text-gray-700 whitespace-pre-wrap">{submission.assignment?.description}</p>
-                </div>
+                </Card>
 
                 {/* Student Submission Content */}
-                <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Student's Submission</h2>
+                <Card title="Student's Submission">
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
                         <p className="text-gray-800 whitespace-pre-wrap">{submission.content || 'No content provided'}</p>
                     </div>
@@ -254,120 +243,131 @@ export default function StudentSubmittedAssignmentDetail() {
                                 <div className="flex items-center gap-3">
                                     <FaFileAlt className="text-blue-600 text-2xl" />
                                     <div>
-                                        <p className="font-medium text-gray-800">Attached File</p>
-                                        <p className="text-sm text-gray-600">Click to download</p>
+                                        <p className="font-medium text-gray-900">Attached File</p>
+                                        <p className="text-sm text-gray-500">Click to download</p>
                                     </div>
                                 </div>
                                 <a
                                     href={submission.file_upload}
                                     download
                                     target="_blank"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                    rel="noreferrer"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium">
                                     <FaDownload />
                                     Download
                                 </a>
                             </div>
                         </div>
                     )}
-                </div>
+                </Card>
 
                 {/* Grading Form */}
-                <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-sm p-6 mt-6">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Grade & Feedback</h2>
+                <Card title="Grade & Feedback">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        {/* Success Alert */}
+                        {success && (
+                            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <FaCheckCircle className="h-5 w-5 text-green-400" />
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-sm text-green-700">Grade and feedback saved successfully! Redirecting...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
-                    {/* Success Alert */}
-                    {success && (
-                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
-                            <FaCheckCircle className="text-2xl" />
+                        {/* Error Alert */}
+                        {error && (
+                            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-sm text-red-700">{error}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Grade Input */}
                             <div>
-                                <strong className="font-bold">Success! </strong>
-                                <span className="block sm:inline">Grade and feedback saved successfully! Redirecting...</span>
+                                <label htmlFor="grade" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Grade (0-100)
+                                </label>
+                                <input
+                                    type="number"
+                                    id="grade"
+                                    {...register('grade', {
+                                        required: 'Grade is required',
+                                        min: { value: 0, message: 'Grade must be at least 0' },
+                                        max: { value: 100, message: 'Grade cannot exceed 100' }
+                                    })}
+                                    className="block w-full sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 py-2.5"
+                                    placeholder="Enter grade (0-100)"
+                                    step="0.01"
+                                />
+                                {errors.grade && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.grade.message}</p>
+                                )}
                             </div>
-                        </div>
-                    )}
 
-                    {/* Error Alert */}
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                            <strong className="font-bold">Error! </strong>
-                            <span className="block sm:inline">{error}</span>
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        {/* Grade Input */}
-                        <div>
-                            <label htmlFor="grade" className="block text-sm font-medium text-gray-700 mb-2">
-                                Grade (0-100)
-                            </label>
-                            <input
-                                type="number"
-                                id="grade"
-                                {...register('grade', {
-                                    required: 'Grade is required',
-                                    min: { value: 0, message: 'Grade must be at least 0' },
-                                    max: { value: 100, message: 'Grade cannot exceed 100' }
-                                })}
-                                className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-                                placeholder="Enter grade (0-100)"
-                                step="0.01"
-                            />
-                            {errors.grade && (
-                                <p className="text-red-500 text-xs mt-1">{errors.grade.message}</p>
-                            )}
-                        </div>
-
-                        {/* Current Status */}
-                        <div className="flex items-center">
-                            <div className={`w-full p-4 rounded-lg border-2 ${submission.grade !== null
-                                ? 'bg-green-50 border-green-500'
-                                : 'bg-orange-50 border-orange-500'
-                                }`}>
-                                <p className="text-sm font-medium text-gray-600">Current Status</p>
-                                <p className={`text-2xl font-bold ${submission.grade !== null ? 'text-green-700' : 'text-orange-700'
+                            {/* Current Status */}
+                            <div className="flex items-center">
+                                <div className={`w-full p-4 rounded-lg border-2 ${submission.grade !== null
+                                    ? 'bg-green-50 border-green-500'
+                                    : 'bg-orange-50 border-orange-500'
                                     }`}>
-                                    {submission.grade !== null ? `Graded: ${submission.grade}` : 'Not Graded'}
-                                </p>
+                                    <p className="text-sm font-medium text-gray-600">Current Status</p>
+                                    <p className={`text-2xl font-bold ${submission.grade !== null ? 'text-green-700' : 'text-orange-700'
+                                        }`}>
+                                        {submission.grade !== null ? `Graded: ${submission.grade}` : 'Not Graded'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Feedback Textarea */}
-                    <div className="mb-6">
-                        <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-2">
-                            Feedback (Optional)
-                        </label>
-                        <textarea
-                            id="feedback"
-                            {...register('feedback')}
-                            rows="6"
-                            className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-                            placeholder="Provide feedback to the student..."
-                        ></textarea>
-                        <p className="text-xs text-gray-500 mt-2">
-                            Share constructive feedback to help the student improve.
-                        </p>
-                    </div>
+                        {/* Feedback Textarea */}
+                        <div>
+                            <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-1">
+                                Feedback (Optional)
+                            </label>
+                            <textarea
+                                id="feedback"
+                                {...register('feedback')}
+                                rows="6"
+                                className="block w-full sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 p-3"
+                                placeholder="Provide feedback to the student..."
+                            ></textarea>
+                            <p className="text-xs text-gray-500 mt-2">
+                                Share constructive feedback to help the student improve.
+                            </p>
+                        </div>
 
-                    {/* Submit Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                        <button
-                            type="button"
-                            onClick={() => navigate('/teacher/assignment-submissions')}
-                            className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={submitting}
-                        >
-                            <FaSave />
-                            {submitting ? 'Saving...' : 'Save Grade & Feedback'}
-                        </button>
-                    </div>
-                </form>
+                        {/* Submit Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-100 justify-end">
+                            <Button
+                                variant="secondary"
+                                onClick={() => navigate('/teacher/assignment-submissions')}
+                                type="button"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                disabled={submitting}
+                            >
+                                {submitting ? 'Saving...' : 'Save Grade & Feedback'}
+                            </Button>
+                        </div>
+                    </form>
+                </Card>
             </div>
         </div>
     );

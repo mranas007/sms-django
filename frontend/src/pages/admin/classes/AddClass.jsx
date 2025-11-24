@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaTimes, FaChevronDown, FaSearch } from 'react-icons/fa';
-import BackBtn from '../../../components/BackBtn';
-import apiClient from '../../../services/Api';
+import { FaTimes, FaChevronDown, FaSearch, FaPlus } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import SuccessMsg from '../../../components/SuccessMsg';
 
+// SERVICES & UTILS
+import apiClient from '../../../services/Api';
+
+// COMPONENTS
+import Card from '../../../components/common/Card.jsx';
+import Button from '../../../components/common/Button.jsx';
+import InputField from '../../../components/common/InputField.jsx';
 
 // Reusable Multi-Select Component
 const MultiSelectDropdown = ({
@@ -12,7 +17,7 @@ const MultiSelectDropdown = ({
   options = [],
   selected = [],
   onChange = () => { },
-  onSearch = null, // <-- for API search
+  onSearch = null,
   placeholder = 'Select...',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +25,6 @@ const MultiSelectDropdown = ({
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
 
-  // ✅ Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -31,7 +35,6 @@ const MultiSelectDropdown = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ✅ Debounced API search (if onSearch is provided)
   useEffect(() => {
     if (!onSearch) return;
     const handler = setTimeout(async () => {
@@ -40,14 +43,13 @@ const MultiSelectDropdown = ({
       setLoading(false);
     }, 300);
     return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [searchTerm, onSearch]);
 
-  // ✅ Local filtering of options based on searchTerm
   const filteredOptions = options.filter((option) => {
     const search = searchTerm.toLowerCase();
     return (
       option.username?.toLowerCase().includes(search) ||
-      option.name?.toLowerCase().includes(search) 
+      option.name?.toLowerCase().includes(search)
     );
   });
 
@@ -71,7 +73,7 @@ const MultiSelectDropdown = ({
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="min-h-[42px] w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white cursor-pointer hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        className="min-h-[42px] w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer hover:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
       >
         <div className="flex flex-wrap gap-2 items-center">
           {selected.length === 0 ? (
@@ -96,7 +98,7 @@ const MultiSelectDropdown = ({
             })
           )}
           <FaChevronDown
-            size={20}
+            size={16}
             className={`ml-auto text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           />
         </div>
@@ -106,13 +108,13 @@ const MultiSelectDropdown = ({
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-hidden">
           <div className="p-2 border-b border-gray-200">
             <div className="relative">
-              <FaSearch size={18} className="absolute left-2 top-2.5 text-gray-400" />
+              <FaSearch size={16} className="absolute left-2 top-2.5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
@@ -177,8 +179,8 @@ const MultiSelectDropdown = ({
   );
 };
 
-// AddClass Component
 const AddClass = () => {
+  const navigate = useNavigate();
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm({
     defaultValues: {
       name: '',
@@ -194,64 +196,57 @@ const AddClass = () => {
   const [availableTeachers, setAvailableTeachers] = useState([]);
   const [availableSubjects, setAvailableSubjects] = useState([]);
   const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Handle form submission
-  // Fetch students with search
   const getStudents = async (search = '') => {
     try {
       const res = await apiClient.get(`admin/users/?role=Student&search=${search}`);
       if (res.status === 200) setAvailableStudents(res.data.results);
       else setAvailableStudents([]);
-      // console.log("students: ", res.data);
     } catch (err) {
       console.error('Error fetching students:', err.message);
     }
   };
 
-  // Fetch teachers with search
   const getTeachers = async (search = '') => {
     try {
       const res = await apiClient.get(`admin/users/?role=Teacher&search=${search}`);
       if (res.status === 200) setAvailableTeachers(res.data.results);
       else setAvailableTeachers([]);
-      // console.log("teachers: ", res.data);
     } catch (err) {
       console.error('Error fetching teachers:', err.message);
     }
   };
 
-  // Fetch subjects - FIXED: subjects returns array directly, not wrapped in results
   const getSubjects = async () => {
     try {
       const res = await apiClient.get('admin/subjects/');
       if (res.status === 200) {
-        // FIX: Check if data is already an array or wrapped in results
         const subjectsData = Array.isArray(res.data) ? res.data : res.data.results;
         setAvailableSubjects(subjectsData || []);
       } else {
         setAvailableSubjects([]);
       }
-      // console.log("subjects: ", res.data);
     } catch (err) {
       console.error('Error fetching subjects:', err.message);
     }
   };
 
-  // Initial load
   useEffect(() => {
     getStudents();
     getTeachers();
     getSubjects();
   }, []);
 
-  // ✅ Form submit
   const onSubmit = async (data) => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
     try {
       const res = await apiClient.post('admin/classes/', data);
       if (res.status === 201) {
         setSuccess('Class created successfully!');
-        setSuccess('Class created successfully!');
-        // Clear form data after successful creation
         reset({
           name: '',
           subjects: [],
@@ -260,126 +255,140 @@ const AddClass = () => {
           academic_year: '',
           schedule: ''
         });
-        // console.log('Created class:', res.data);
+        setTimeout(() => navigate('/admin/classes'), 2000);
       }
     } catch (err) {
+      setError(err.response?.data?.message || 'Failed to create class.');
       console.error('Failed to create class:', err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 sm:p-8">
-      <BackBtn />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Add New Class</h1>
-        {success && (
-          <SuccessMsg success={success} />
-        )}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
+    <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <div className="max-w-3xl mx-auto">
+        {/* Page Header */}
+        <div className="mb-8 flex justify-between items-center">
           <div>
-            <label htmlFor="className" className="block text-sm font-medium text-gray-700 mb-1">
-              Class Name
-            </label>
-            <input
-              type="text"
-              id="className"
-              {...register('name', { required: 'Class Name is required' })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="e.g., Grade 10-A"
-            />
-            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Class</h1>
+            <p className="text-gray-600">Create a new class with students, teachers, and subjects</p>
           </div>
+          <Link to="/admin/classes">
+            <Button variant="secondary">Back to Classes</Button>
+          </Link>
+        </div>
 
-          {/* Students Dropdown */}
-          <Controller
-            name="students"
-            control={control}
-            render={({ field }) => (
-              <MultiSelectDropdown
-                label="Students"
-                options={availableStudents || []}
-                selected={field.value || []}
-                onChange={field.onChange}
-                onSearch={getStudents}
-                placeholder="Search and select students..."
-              />
+        {/* Form Card */}
+        <Card>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Success/Error Messages */}
+            {error && (
+              <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+                <strong className="font-semibold">Error: </strong>
+                <span>{error}</span>
+              </div>
             )}
-          />
-
-          {/* Teachers Dropdown */}
-          <Controller
-            name="teachers"
-            control={control}
-            render={({ field }) => (
-              <MultiSelectDropdown
-                label="Teachers"
-                options={availableTeachers || []}
-                selected={field.value || []}
-                onChange={field.onChange}
-                onSearch={getTeachers}
-                placeholder="Search and select teachers..."
-              />
+            {success && (
+              <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+                <strong className="font-semibold">Success! </strong>
+                <span>{success} Redirecting...</span>
+              </div>
             )}
-          />
 
-          {/* Subjects Dropdown */}
-          <Controller
-            name="subjects"
-            control={control}
-            render={({ field }) => (
-              <MultiSelectDropdown
-                label="Subjects"
-                options={availableSubjects || []}
-                selected={field.value || []}
-                onChange={field.onChange}
-                placeholder="Select subjects..."
+            <div className="space-y-6">
+              <InputField
+                label="Class Name"
+                id="className"
+                type="text"
+                register={register('name', { required: 'Class Name is required' })}
+                error={errors.name?.message}
+                placeholder="e.g., Grade 10-A"
+                required
               />
-            )}
-          />
 
-          <div>
-            <label htmlFor="academicYear" className="block text-sm font-medium text-gray-700 mb-1">
-              Academic Year
-            </label>
-            <input
-              type="text"
-              id="academicYear"
-              {...register('academic_year', { required: 'Academic Year is required' })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="e.g., 2024-2025"
-            />
-            {errors.academic_year && <p className="text-red-500 text-xs mt-1">{errors.academic_year.message}</p>}
-          </div>
+              <Controller
+                name="students"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelectDropdown
+                    label="Students"
+                    options={availableStudents || []}
+                    selected={field.value || []}
+                    onChange={field.onChange}
+                    onSearch={getStudents}
+                    placeholder="Search and select students..."
+                  />
+                )}
+              />
 
-          <div>
-            <label htmlFor="schedule" className="block text-sm font-medium text-gray-700 mb-1">
-              Schedule
-            </label>
-            <input
-              type="text"
-              id="schedule"
-              {...register('schedule', { required: 'Schedule is required' })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="e.g., Mon/Wed 10:00-11:00"
-            />
-            {errors.schedule && <p className="text-red-500 text-xs mt-1">{errors.schedule.message}</p>}
-          </div>
+              <Controller
+                name="teachers"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelectDropdown
+                    label="Teachers"
+                    options={availableTeachers || []}
+                    selected={field.value || []}
+                    onChange={field.onChange}
+                    onSearch={getTeachers}
+                    placeholder="Search and select teachers..."
+                  />
+                )}
+              />
 
-          <div className="flex justify-end space-x-4 mt-6">
-            <button
-              type="button"
-              onClick={() => window.history.back()}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Create Class
-            </button>
-          </div>
-        </form>
+              <Controller
+                name="subjects"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelectDropdown
+                    label="Subjects"
+                    options={availableSubjects || []}
+                    selected={field.value || []}
+                    onChange={field.onChange}
+                    placeholder="Select subjects..."
+                  />
+                )}
+              />
+
+              <InputField
+                label="Academic Year"
+                id="academicYear"
+                type="text"
+                register={register('academic_year', { required: 'Academic Year is required' })}
+                error={errors.academic_year?.message}
+                placeholder="e.g., 2024-2025"
+                required
+              />
+
+              <InputField
+                label="Schedule"
+                id="schedule"
+                type="text"
+                register={register('schedule', { required: 'Schedule is required' })}
+                error={errors.schedule?.message}
+                placeholder="e.g., Mon/Wed 10:00-11:00"
+                required
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+              <Link to="/admin/classes">
+                <Button variant="secondary" type="button">
+                  Cancel
+                </Button>
+              </Link>
+              <Button
+                type="submit"
+                variant="primary"
+                icon={<FaPlus />}
+                disabled={loading}
+              >
+                {loading ? 'Creating...' : 'Create Class'}
+              </Button>
+            </div>
+          </form>
+        </Card>
       </div>
     </div>
   );

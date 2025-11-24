@@ -63,6 +63,7 @@ import StudentAssignments from './pages/student/Assignments/Assignments.jsx';
 import StudentAssignmentDetail from './pages/student/Assignments/AssignmentDetail.jsx';
 import StudentAssignmentSubmission from './pages/student/Assignments/AssignmentSubmission.jsx';
 import StudentClass from './pages/student/Classes/ClassDetail.jsx';
+import Grades from './pages/student/Grade/Grades.jsx';
 
 
 
@@ -130,6 +131,7 @@ function App() {
             <Route path="/student/assignments" element={<StudentAssignments />} />
             <Route path="/student/assignment/:id" element={<StudentAssignmentDetail />} />
             <Route path="/student/assignment/:id/submit" element={<StudentAssignmentSubmission />} />
+            <Route path="/student/grades" element={<Grades />} />
 
           </Route>
 

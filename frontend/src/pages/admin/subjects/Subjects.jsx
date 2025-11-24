@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaPlus, FaSearch, FaEdit, FaTrash, FaBook } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaEdit, FaBook } from 'react-icons/fa';
+
+// SERVICES & UTILS
 import Api from '../../../services/Api.jsx';
+
+// COMPONENTS
+import Card from '../../../components/common/Card.jsx';
+import Button from '../../../components/common/Button.jsx';
+import Table from '../../../components/common/Table.jsx';
 import CircleLoader from '../../../components/CircleLoader.jsx';
 import ErrorMsg from '../../../components/ErrorMsg.jsx';
-import BackBtn from '../../../components/BackBtn'
 import DeleteConfirmation from '../../../components/DeleteConfirmation.jsx';
 
 export default function Subjects() {
@@ -16,12 +22,10 @@ export default function Subjects() {
     const fetchSubjects = async (search = '') => {
         try {
             const res = await Api.get(`/admin/subjects/?s=${search}`);
-            if(res.status == 200 || res.status == 201)
+            if (res.status === 200 || res.status === 201)
                 setSubjects(res.data);
-            // console.log(res.data);
         } catch (err) {
             setError('Failed to fetch subjects.');
-            // console.error('Error fetching subjects:', err);
         } finally {
             setLoading(false);
         }
@@ -30,103 +34,118 @@ export default function Subjects() {
     useEffect(() => {
         const handler = setTimeout(() => {
             fetchSubjects(searchQuery);
-        }, 300); // Debounce search
+        }, 300);
         return () => clearTimeout(handler);
-      }, [searchQuery]);
-
+    }, [searchQuery]);
 
     const handleDelete = () => {
         fetchSubjects(searchQuery);
     };
-        
 
     if (loading) {
-        return <div className="h-screen w-full flex">
-            <CircleLoader fullScreen={false} />;
-        </div>
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <CircleLoader fullScreen={false} />
+            </div>
+        );
     }
 
     if (error) {
-        return <ErrorMsg message={error} />;
+        return (
+            <div className="lg:ml-64 p-6 lg:p-8">
+                <ErrorMsg message={error} />
+            </div>
+        );
     }
 
+    const columns = [
+        {
+            header: 'Subject Name',
+            key: 'name',
+            render: (subject) => (
+                <div className="font-medium text-gray-900">{subject.name}</div>
+            )
+        },
+        {
+            header: 'Subject Code',
+            key: 'code',
+            render: (subject) => (
+                <div className="text-gray-600 font-mono">{subject.code}</div>
+            )
+        },
+        {
+            header: 'Actions',
+            key: 'actions',
+            render: (subject) => (
+                <div className="flex items-center gap-2">
+                    <Link to={`/admin/edit/subject/${subject.id}`}>
+                        <Button variant="primary" size="sm" icon={<FaEdit />}>
+                            Edit
+                        </Button>
+                    </Link>
+                    <DeleteConfirmation
+                        deleteUrl={`/admin/subject/${subject.id}/`}
+                        onDeleteSuccess={handleDelete}
+                        itemName={subject.name}
+                        buttonSize="sm"
+                    />
+                </div>
+            )
+        }
+    ];
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 pt-20">
+        <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
             <div className="max-w-7xl mx-auto">
-                {/* Header Section */}
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-4xl font-bold text-gray-800 mb-2">Subject Management</h1>
-                        <p className="text-gray-600">Manage your school subjects</p>
-                    </div>
-                    <div>
-                        <BackBtn />
-                    </div>
+                {/* Page Header */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Subject Management</h1>
+                    <p className="text-gray-600">Manage your school subjects and course codes</p>
                 </div>
 
                 {/* Search and Add Section */}
-                <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                        <div className="relative flex-1 w-full md:w-auto">
-                            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search by subject name or code..."
-                                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                <Card className="mb-6">
+                    <div className="flex flex-col md:flex-row gap-4 items-end justify-between">
+                        <div className="flex-1 max-w-md">
+                            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+                                Search Subjects
+                            </label>
+                            <div className="relative">
+                                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <input
+                                    id="search"
+                                    type="text"
+                                    placeholder="Search by subject name or code..."
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
                         </div>
-                        <Link
-                            to="/admin/add/subject"
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center gap-2 transition shadow-md hover:shadow-lg whitespace-nowrap"
-                        >
-                            <FaPlus /> Add New Subject
+                        <Link to="/admin/add/subject">
+                            <Button variant="primary" icon={<FaPlus />}>
+                                Add New Subject
+                            </Button>
                         </Link>
                     </div>
-                </div>
+                </Card>
 
-                {/* Subjects List */}
-                {subjects.length <= 0 ? (
-                    <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-                        <FaBook className="text-gray-300 text-6xl mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg">No subjects found</p>
-                        <p className="text-gray-400 text-sm mt-2">Try adjusting your search or add a new subject</p>
-                    </div>
-                ) : (
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {subjects.map((subject) => (
-                                    <tr key={subject.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{subject.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{subject.code}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                          
-                                            <Link to={`/admin/edit/subject/${subject.id}`} className="p-2 rounded bg-indigo-600 hover:bg-indigo-900 text-white mr-4">
-                                                <FaEdit className="inline-block mr-1" /> Edit
-                                            </Link>
-                                            <DeleteConfirmation 
-                                                deleteUrl={`/admin/subject/${subject.id}/`}
-                                                onDeleteSuccess={handleDelete}
-                                                itemName={subject.name}
-                                                buttonSize="sm"
-                                            />
-
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                {/* Subjects Table */}
+                <Card>
+                    {subjects.length === 0 ? (
+                        <div className="text-center py-12">
+                            <FaBook className="text-gray-300 text-6xl mx-auto mb-4" />
+                            <p className="text-gray-500 text-lg mb-2">No subjects found</p>
+                            <p className="text-gray-400 text-sm">Try adjusting your search or add a new subject</p>
+                        </div>
+                    ) : (
+                        <Table
+                            columns={columns}
+                            data={subjects}
+                            emptyMessage="No subjects found"
+                        />
+                    )}
+                </Card>
             </div>
         </div>
     );

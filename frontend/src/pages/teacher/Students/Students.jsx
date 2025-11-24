@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBirthdayCake, FaUsers, FaGraduationCap, FaSearch } from 'react-icons/fa';
+import { FaUsers, FaGraduationCap, FaBirthdayCake, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+
 import apiClient from '../../../services/Api';
 import CircleLoader from '../../../components/CircleLoader';
+import Card from '../../../components/common/Card.jsx';
+import Table from '../../../components/common/Table.jsx';
+import Button from '../../../components/common/Button.jsx';
 
 export default function Students() {
   const [loading, setLoading] = useState(false);
@@ -34,7 +38,6 @@ export default function Students() {
     student.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Calculate age from birth date
   const calculateAge = (birthDate) => {
     if (!birthDate) return 'N/A';
     const today = new Date();
@@ -47,18 +50,6 @@ export default function Students() {
     return age;
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  // Get initials for avatar
   const getInitials = (name) => {
     if (!name) return '?';
     const names = name.split(' ');
@@ -68,188 +59,140 @@ export default function Students() {
     return name.substring(0, 2).toUpperCase();
   };
 
-  if (loading) return <div className="h-screen w-full flex items-center justify-center"><CircleLoader /></div>;
-  if (error) return <p className="text-red-600 text-center mt-8">{error}</p>;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">My Students</h1>
-          <p className="text-gray-600">View and manage your students' information</p>
-        </div>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-indigo-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Total Students</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{students.length}</p>
-              </div>
-              <div className="bg-indigo-100 p-4 rounded-lg">
-                <FaUsers className="text-indigo-600 text-2xl" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Active Students</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{students.length}</p>
-              </div>
-              <div className="bg-green-100 p-4 rounded-lg">
-                <FaGraduationCap className="text-green-600 text-2xl" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Average Age</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">
-                  {students.length > 0
-                    ? Math.round(students.reduce((sum, s) => sum + (calculateAge(s.birth_date) !== 'N/A' ? calculateAge(s.birth_date) : 0), 0) / students.filter(s => s.birth_date).length)
-                    : 0}
-                </p>
-              </div>
-              <div className="bg-purple-100 p-4 rounded-lg">
-                <FaBirthdayCake className="text-purple-600 text-2xl" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-          <div className="relative">
-            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search students by name, username, or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-            />
-          </div>
-        </div>
-
-        {/* Students List */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">Student Directory</h3>
-
-          {filteredStudents.length === 0 ? (
-            <div className="text-center py-12">
-              <FaUsers className="text-gray-300 text-6xl mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">
-                {searchTerm ? 'No students found matching your search' : 'No students found'}
-              </p>
-              <p className="text-gray-400 text-sm mt-2">
-                {searchTerm ? 'Try adjusting your search terms' : 'Students will appear here once they are assigned to your classes'}
-              </p>
-            </div>
+  const columns = [
+    {
+      header: "Student",
+      accessor: "full_name",
+      render: (row) => (
+        <div className="flex items-center gap-3">
+          {row.profile_picture ? (
+            <img src={row.profile_picture} alt={row.full_name} className="w-10 h-10 rounded-full object-cover" />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredStudents.map((student) => (
-                <div
-                  key={student.id}
-                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
-                >
-                  {/* Card Header with Avatar */}
-                  <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
-                    <div className="flex items-center gap-4">
-                      {student.profile_picture ? (
-                        <img
-                          src={student.profile_picture}
-                          alt={student.full_name}
-                          className="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 rounded-full border-4 border-white shadow-lg bg-white bg-opacity-20 flex items-center justify-center">
-                          <span className="text-2xl font-bold">
-                            {getInitials(student.full_name)}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold">{student.full_name || 'N/A'}</h4>
-                        <p className="text-indigo-100 text-sm">@{student.username || 'N/A'}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-6 space-y-4">
-                    {/* Email */}
-                    <div className="flex items-start gap-3">
-                      <div className="bg-blue-100 p-2 rounded-lg mt-1">
-                        <FaEnvelope className="text-blue-600 text-sm" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500 font-medium">Email</p>
-                        <p className="text-sm text-gray-800 break-all">{student.email || 'N/A'}</p>
-                      </div>
-                    </div>
-
-                    {/* Phone */}
-                    <div className="flex items-start gap-3">
-                      <div className="bg-green-100 p-2 rounded-lg mt-1">
-                        <FaPhone className="text-green-600 text-sm" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500 font-medium">Phone</p>
-                        <p className="text-sm text-gray-800">{student.phone_number || 'N/A'}</p>
-                      </div>
-                    </div>
-
-                    {/* Address */}
-                    <div className="flex items-start gap-3">
-                      <div className="bg-orange-100 p-2 rounded-lg mt-1">
-                        <FaMapMarkerAlt className="text-orange-600 text-sm" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500 font-medium">Address</p>
-                        <p className="text-sm text-gray-800">{student.address || 'N/A'}</p>
-                      </div>
-                    </div>
-
-                    {/* Birth Date & Age */}
-                    <div className="flex items-start gap-3">
-                      <div className="bg-purple-100 p-2 rounded-lg mt-1">
-                        <FaBirthdayCake className="text-purple-600 text-sm" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500 font-medium">Birth Date</p>
-                        <p className="text-sm text-gray-800">
-                          {formatDate(student.birth_date)}
-                          {student.birth_date && (
-                            <span className="text-xs text-gray-500 ml-2">
-                              ({calculateAge(student.birth_date)} years old)
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Bio */}
-                    {student.bio && (
-                      <div className="pt-4 border-t border-gray-200">
-                        <p className="text-xs text-gray-500 font-medium mb-2">Bio</p>
-                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">
-                          {student.bio}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
+              {getInitials(row.full_name)}
             </div>
           )}
+          <div>
+            <p className="font-medium text-gray-900">{row.full_name}</p>
+            <p className="text-xs text-gray-500">@{row.username}</p>
+          </div>
         </div>
+      )
+    },
+    {
+      header: "Contact",
+      render: (row) => (
+        <div className="text-sm text-gray-600 space-y-1">
+          <div className="flex items-center gap-2">
+            <FaEnvelope className="text-gray-400 text-xs" />
+            <span>{row.email || 'N/A'}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaPhone className="text-gray-400 text-xs" />
+            <span>{row.phone_number || 'N/A'}</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      header: "Location",
+      accessor: "address",
+      render: (row) => (
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <FaMapMarkerAlt className="text-gray-400 text-xs" />
+          <span className="truncate max-w-xs">{row.address || 'N/A'}</span>
+        </div>
+      )
+    },
+    {
+      header: "Age",
+      accessor: "birth_date",
+      render: (row) => (
+        <span className="text-sm text-gray-600">
+          {calculateAge(row.birth_date)} years
+        </span>
+      )
+    },
+    {
+      header: "Actions",
+      render: (row) => (
+        <Button variant="secondary" className="text-xs py-1 px-2">View Profile</Button>
+      )
+    }
+  ];
+
+  if (loading) return (
+    <div className="w-full h-screen flex items-center justify-center">
+      <CircleLoader fullScreen={false} />
+    </div>);
+  if (error) return <div className="p-6 text-red-600 bg-red-50">{error}</div>;
+
+  return (
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">My Students</h1>
+        <p className="text-gray-500">View and manage your students' information.</p>
       </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="border-l-4 border-l-indigo-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-500">Total Students</p>
+              <p className="text-2xl font-bold text-gray-900">{students.length}</p>
+            </div>
+            <div className="p-3 bg-indigo-50 rounded-full">
+              <FaUsers className="text-indigo-600 text-xl" />
+            </div>
+          </div>
+        </Card>
+        <Card className="border-l-4 border-l-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-500">Active Students</p>
+              <p className="text-2xl font-bold text-gray-900">{students.length}</p>
+            </div>
+            <div className="p-3 bg-green-50 rounded-full">
+              <FaGraduationCap className="text-green-600 text-xl" />
+            </div>
+          </div>
+        </Card>
+        <Card className="border-l-4 border-l-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-500">Average Age</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {students.length > 0
+                  ? Math.round(students.reduce((sum, s) => sum + (calculateAge(s.birth_date) !== 'N/A' ? calculateAge(s.birth_date) : 0), 0) / students.filter(s => s.birth_date).length)
+                  : 0}
+              </p>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-full">
+              <FaBirthdayCake className="text-purple-600 text-xl" />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Student List */}
+      <Card title="Student Directory">
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search students..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <Table
+          columns={columns}
+          data={filteredStudents}
+          emptyMessage="No students found matching your search."
+        />
+      </Card>
     </div>
   );
 }

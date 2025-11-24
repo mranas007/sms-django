@@ -1,15 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../context/AuthContext.jsx';
-import { FaBars, FaTimes, FaUser, FaSignOutAlt, FaSignInAlt, FaHome, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
-
-
-
+import { FaBars, FaTimes, FaGraduationCap } from 'react-icons/fa';
+import Button from '../common/Button.jsx';
 
 function Navbar() {
     const { isAuthenticate, logout } = useAuthContext();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -31,85 +30,79 @@ function Navbar() {
         setIsMobileMenuOpen(false);
     };
 
+    const isActive = (path) => {
+        return location.pathname === path;
+    };
+
     return (
-        <nav className="bg-gradient-to-r from-indigo-500 to-indigo-600 shadow-lg sticky top-0 z-50">
+        <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <Link
                         to="/"
-                        className="text-2xl font-bold text-white hover:text-indigo-100 transition-all duration-300 flex items-center gap-2"
+                        className="flex items-center gap-2 text-gray-900 hover:text-indigo-600 transition-colors"
                     >
-                        Django SMS
+                        <div className="bg-indigo-600 p-2 rounded-lg">
+                            <FaGraduationCap className="text-white text-xl" />
+                        </div>
+                        <span className="text-xl font-bold tracking-tight">Excellence Institute</span>
                     </Link>
 
                     {/* Desktop Navigation Links */}
-                    <ul className="hidden md:flex space-x-8">
+                    <ul className="hidden md:flex space-x-1">
                         <li>
                             <Link
                                 to="/"
-                                className="text-white hover:text-indigo-100 transition-colors duration-300 flex items-center gap-2 font-medium"
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/')
+                                        ? 'bg-indigo-50 text-indigo-700'
+                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                    }`}
                             >
-                                <FaHome /> Home
+                                Home
                             </Link>
                         </li>
                         <li>
                             <Link
                                 to="/about"
-                                className="text-white hover:text-indigo-100 transition-colors duration-300 flex items-center gap-2 font-medium"
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/about')
+                                        ? 'bg-indigo-50 text-indigo-700'
+                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                    }`}
                             >
-                                <FaInfoCircle /> About Us
+                                About
                             </Link>
                         </li>
                         <li>
                             <Link
                                 to="/contact"
-                                className="text-white hover:text-indigo-100 transition-colors duration-300 flex items-center gap-2 font-medium"
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/contact')
+                                        ? 'bg-indigo-50 text-indigo-700'
+                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                    }`}
                             >
-                                <FaEnvelope /> Contact
+                                Contact
                             </Link>
                         </li>
                     </ul>
 
                     {/* Desktop Auth Buttons */}
-                    <ul className="hidden md:flex space-x-4 items-center">
-                        {isLoggedIn ? (
-                            <>
-                                <li>
-                                    <Link
-                                        to="/profile"
-                                        className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 font-medium"
-                                    >
-                                        <FaUser /> Profile
-                                    </Link>
-                                </li>
-                                <li>
-                                    <button
-                                        onClick={logout}
-                                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 font-medium shadow-md"
-                                    >
-                                        <FaSignOutAlt /> Logout
-                                    </button>
-                                </li>
-                            </>
-                        ) : (
-                            <>
-                                <li>
-                                    <Link
-                                        to="/login"
-                                        className="bg-white text-indigo-600 hover:bg-indigo-50 px-6 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 font-semibold shadow-md"
-                                    >
-                                        <FaSignInAlt /> Login
-                                    </Link>
-                                </li>
-                            </>
+                    <div className="hidden md:flex items-center gap-3">
+                        {!isLoggedIn && (
+                            <Button
+                                variant="primary"
+                                onClick={() => window.location.href = '/login'}
+                                className="px-6"
+                            >
+                                Login
+                            </Button>
                         )}
-                    </ul>
+                    </div>
 
                     {/* Mobile Menu Button */}
                     <button
                         onClick={toggleMobileMenu}
-                        className="md:hidden text-white hover:text-indigo-100 focus:outline-none transition-colors duration-300"
+                        className="md:hidden text-gray-700 hover:text-gray-900 focus:outline-none p-2"
                     >
                         {isMobileMenuOpen ? (
                             <FaTimes className="h-6 w-6" />
@@ -122,66 +115,56 @@ function Navbar() {
 
             {/* Mobile Menu */}
             <div
-                className={`md:hidden bg-indigo-700 overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+                className={`md:hidden bg-white border-t border-gray-200 overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
                     }`}
             >
-                <div className="px-4 pt-2 pb-4 space-y-2">
+                <div className="px-4 pt-2 pb-4 space-y-1">
                     {/* Mobile Navigation Links */}
                     <Link
                         to="/"
                         onClick={closeMobileMenu}
-                        className="block text-white hover:bg-indigo-600 px-4 py-3 rounded-lg transition-all duration-300 flex items-center gap-3"
+                        className={`block px-4 py-3 rounded-md text-base font-medium transition-colors ${isActive('/')
+                                ? 'bg-indigo-50 text-indigo-700'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                            }`}
                     >
-                        <FaHome /> Home
+                        Home
                     </Link>
                     <Link
                         to="/about"
                         onClick={closeMobileMenu}
-                        className="block text-white hover:bg-indigo-600 px-4 py-3 rounded-lg transition-all duration-300 flex items-center gap-3"
+                        className={`block px-4 py-3 rounded-md text-base font-medium transition-colors ${isActive('/about')
+                                ? 'bg-indigo-50 text-indigo-700'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                            }`}
                     >
-                        <FaInfoCircle /> About Us
+                        About
                     </Link>
                     <Link
                         to="/contact"
                         onClick={closeMobileMenu}
-                        className="block text-white hover:bg-indigo-600 px-4 py-3 rounded-lg transition-all duration-300 flex items-center gap-3"
+                        className={`block px-4 py-3 rounded-md text-base font-medium transition-colors ${isActive('/contact')
+                                ? 'bg-indigo-50 text-indigo-700'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                            }`}
                     >
-                        <FaEnvelope /> Contact
+                        Contact
                     </Link>
 
-                    {/* Mobile Divider */}
-                    <div className="border-t border-indigo-500 my-2"></div>
-
-                    {/* Mobile Auth Links */}
-                    {isLoggedIn ? (
-                        <>
-                            <Link
-                                to="/profile"
-                                onClick={closeMobileMenu}
-                                className="block bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-3 rounded-lg transition-all duration-300 flex items-center gap-3"
-                            >
-                                <FaUser /> Profile
-                            </Link>
-                            <button
+                    {/* Mobile Auth Button */}
+                    {!isLoggedIn && (
+                        <div className="pt-4">
+                            <Button
+                                variant="primary"
                                 onClick={() => {
-                                    logout();
+                                    window.location.href = '/login';
                                     closeMobileMenu();
                                 }}
-                                className="w-full text-left bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg transition-all duration-300 flex items-center gap-3"
+                                className="w-full justify-center"
                             >
-                                <FaSignOutAlt /> Logout
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <Link
-                                to="/login"
-                                onClick={closeMobileMenu}
-                                className="block bg-white text-indigo-600 hover:bg-indigo-50 px-4 py-3 rounded-lg transition-all duration-300 flex items-center gap-3 font-semibold text-center justify-center"
-                            >
-                                <FaSignInAlt /> Login
-                            </Link>
-                        </>
+                                Login
+                            </Button>
+                        </div>
                     )}
                 </div>
             </div>

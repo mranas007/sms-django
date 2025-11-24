@@ -9,7 +9,7 @@ from apps.core.models import Class
 
 class StudentDashboard(APIView):
     permission_classes = [RoleRequiredPermission]
-    allowed_roles = ['Student', 'Admin']
+    allowed_roles = ['Student']
     
     # Note: APIView doesn't automatically use this, but it's good for documentation
     serializer_class = StudentDashboardSerializer

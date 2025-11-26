@@ -15,7 +15,7 @@ urlpatterns = [
     path("class/", classes.ClassDetail.as_view(), name="student_classes"),
     
     path(
-        "assignments/grades",
+        "assignments/grades/",
         grades.GradesView.as_view(),
         name="student_grades",
     ),

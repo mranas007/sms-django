@@ -24,7 +24,7 @@ apiClient.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-
+let count = 0;
 // Response interceptor: Handle token refresh
 apiClient.interceptors.response.use(
     (response) => response,
@@ -47,6 +47,7 @@ apiClient.interceptors.response.use(
                 });
 
                 if (response?.data?.access) {
+                    count++;
                     localStorage.setItem(ACCESS_TOKEN, response.data.access);
 
                     // --- FIX 2: Update default headers on 'apiClient' ---
@@ -58,8 +59,11 @@ apiClient.interceptors.response.use(
                     // --- FIX 4: Retry the original request with 'apiClient' ---
                     return apiClient(originalRequest);
 
-                } else {
-                    localStorage.clear()
+                }
+                if (count >= 2) {
+                    localStorage.removeItem(ACCESS_TOKEN);
+                    localStorage.removeItem(REFRESH_TOKEN);
+                    window.location.href = '/login'; // Hard redirect to login
                 }
 
             } catch (refreshError) {

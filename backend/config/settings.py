@@ -10,23 +10,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False')
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "False")
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "192.168.100.147",
     "172.30.240.1",
-    "172.26.176.1"
+    "172.26.176.1",
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://192.168.100.147:5173",
-    "http://172.30.240.1:5173",
-    "http://172.26.176.1:5173"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    # "http://10.188.231.7:3000",
+    # "http://172.18.32.1:3000",
+    # "http://172.26.176.1:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
     # MY APPS
     "apps.accounts",
     "apps.student",
@@ -51,8 +50,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.activity_log",
     "apps.admin_panel",
-
-    # thrid 
+    # thrid
     "rest_framework",
     "corsheaders",
 ]
@@ -90,9 +88,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 # DATABASES = {
@@ -133,7 +131,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-   
 }
 
 SIMPLE_JWT = {
@@ -164,11 +161,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Celery Configuration
-CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 
 # Default primary key field type

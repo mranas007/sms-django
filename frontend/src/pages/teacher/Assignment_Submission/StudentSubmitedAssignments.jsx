@@ -23,6 +23,7 @@ export default function StudentSubmittedAssignments() {
     try {
       setLoading(true);
       const res = await apiClient.get('/teacher/assignments/submissions/');
+      // console.log(res.data)
       setSubmissions(res.data);
     } catch (error) {
       const msg = error.message || "Something went wrong!";
@@ -137,7 +138,7 @@ export default function StudentSubmittedAssignments() {
   const columns = [
     {
       header: 'Student',
-      accessor: (submission) => (
+      render: (submission) => (
         <div className="flex items-center gap-3">
           <div className="bg-indigo-100 text-indigo-700 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm">
             {getInitials(submission.student?.full_name)}
@@ -151,7 +152,7 @@ export default function StudentSubmittedAssignments() {
     },
     {
       header: 'Assignment',
-      accessor: (submission) => (
+      render: (submission) => (
         <div>
           <p className="font-medium text-gray-900">{submission.assignment?.title || 'Unknown'}</p>
           <p className="text-xs text-gray-500">{submission.assignment?.subject?.name}</p>
@@ -160,7 +161,7 @@ export default function StudentSubmittedAssignments() {
     },
     {
       header: 'Submitted',
-      accessor: (submission) => (
+      render: (submission) => (
         <div>
           <p className="text-sm text-gray-900">{formatDate(submission.submitted_at)}</p>
           <p className="text-xs text-gray-500">{getTimeSinceSubmission(submission.submitted_at)}</p>
@@ -169,7 +170,7 @@ export default function StudentSubmittedAssignments() {
     },
     {
       header: 'Status',
-      accessor: (submission) => (
+      render: (submission) => (
         <Badge variant={submission.grade !== null ? 'success' : 'warning'}>
           {submission.grade !== null ? `Graded: ${submission.grade}` : 'Pending Review'}
         </Badge>
@@ -177,7 +178,7 @@ export default function StudentSubmittedAssignments() {
     },
     {
       header: 'Actions',
-      accessor: (submission) => (
+      render: (submission) => (
         <Button
           variant="primary"
           size="sm"
@@ -306,7 +307,6 @@ export default function StudentSubmittedAssignments() {
 
         {/* Submissions List */}
         <Table
-          headers={['Student', 'Assignment', 'Submitted', 'Status', 'Actions']}
           data={filteredSubmissions}
           columns={columns}
           emptyMessage="No submissions found matching your criteria."

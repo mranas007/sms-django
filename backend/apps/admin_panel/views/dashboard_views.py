@@ -6,6 +6,8 @@ from apps.accounts.models import User
 from apps.activity_log.models import ActivityLog
 from apps.activity_log.serializers import ActivityLogSerializer
 
+
+
 class Dashboard(APIView):
     permission_classes = [IsAdmin]
 

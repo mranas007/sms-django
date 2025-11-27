@@ -1,7 +1,7 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from apps.teacher.serializers.students import StudentListSerializer
 from apps.core.models import User, Class
+from apps.teacher.permissions import RoleRequiredPermission
 
 
 
@@ -11,8 +11,8 @@ class StudentView(generics.ListAPIView):
     A ListAPIView for Teachers viewing their students.
     """
 
-    permission_classes = [IsAuthenticated]
-    allowed_roles = ["Teacher", "Admin"]
+    permission_classes = [RoleRequiredPermission]
+    allowed_roles = ["Teacher"]
     serializer_class = StudentListSerializer
 
     def get_queryset(self):

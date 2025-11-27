@@ -1,15 +1,15 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from apps.core.models import AssignmentSubmission
 from apps.student.serializers.assignment_submission import (
     AssignmentSubmissionCreateSerializer,
     AssignmentSubmissionListSerializer,
 )
+from apps.student.permissions import RoleRequiredPermission
 
 class AssignmentSubmissionListCreateView(generics.ListCreateAPIView):
     queryset = AssignmentSubmission.objects.all()
-    permission_classes = [IsAuthenticated]
-    allowed_roles = ['Student', 'Admin']
+    permission_classes = [RoleRequiredPermission]
+    allowed_roles = ['Student']
     
     def get_serializer_class(self):
         if self.request.method == "POST":

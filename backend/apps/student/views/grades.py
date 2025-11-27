@@ -1,16 +1,17 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 
 from apps.core.models import AssignmentSubmission
 from apps.student.serializers.assignment_submission import AssignmentSubmissionListSerializer
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 
 from apps.core.models import AssignmentSubmission
 from apps.student.serializers.assignment_submission import AssignmentSubmissionListSerializer
+from apps.student.permissions import RoleRequiredPermission
+
 
 class GradesView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [RoleRequiredPermission]
+    allowed_roles = ['Student']
     serializer_class = AssignmentSubmissionListSerializer
 
 

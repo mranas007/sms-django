@@ -58,5 +58,3 @@ class ClassRUD(APIView):
         log_activity(self.request.user, 'Class Deletion', f'Class {class_instance.name} was deleted by Admin.', content_object=class_instance)
         class_instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-

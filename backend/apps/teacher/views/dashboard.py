@@ -10,7 +10,7 @@ from apps.core.models import Class
 
 class TeacherDashboard(APIView):
     permission_classes = [RoleRequiredPermission]
-    allowed_roles = ['Teacher', 'Admin']
+    allowed_roles = ['Teacher']
 
     def get(self, request):
         user = request.user

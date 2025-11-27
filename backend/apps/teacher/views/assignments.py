@@ -17,7 +17,7 @@ from apps.teacher.permissions import RoleRequiredPermission
 # ASSIGNMENT VIEW - GET ALL, CREATE
 class AssignmentView(APIView):
     permission_classes = [RoleRequiredPermission]
-    allowed_roles = ["Teacher", "Admin"]
+    allowed_roles = ["Teacher"]
 
     def get(self, request):
         try:
@@ -40,7 +40,7 @@ class AssignmentView(APIView):
 # ASSIGNMENT DETAIL VIEW - GET ONE, DELETE, PUT
 class AssignmentDetailView(APIView):
     permission_classes = [RoleRequiredPermission]
-    allowed_roles = ["Teacher", "Admin"]
+    allowed_roles = ["Teacher"]
 
     def get(self, request, assignment_id):
         try:
@@ -74,7 +74,7 @@ class AssignmentDetailView(APIView):
 # GET TEACHER'S CLASSES VIEW - ASSIGNMENT VIEW
 class ClassesSubjectsView(APIView):
     permission_classes = [RoleRequiredPermission]
-    allowed_roles = ["Teacher", "Admin"]
+    allowed_roles = ["Teacher"]
 
     def get(self, request):
         try:

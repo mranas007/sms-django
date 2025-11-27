@@ -1,8 +1,8 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 
 from apps.core.models import Assignment, Class
 from apps.student.serializers.assignments import AssignmentListSerializer
+from apps.student.permissions import RoleRequiredPermission
 
 
 
@@ -11,8 +11,8 @@ class AssignmentListView(generics.ListAPIView):
     API view to list all assignments for students.
     """
 
-    permission_classes = [IsAuthenticated]
-    allowed_roles = ['Student', 'Admin']
+    permission_classes = [RoleRequiredPermission]
+    allowed_roles = ['Student']
     serializer_class = AssignmentListSerializer
     queryset = Assignment.objects.all()
 
@@ -26,7 +26,7 @@ class AssignmentDetailView(generics.RetrieveAPIView):
     API view to retrieve a specific assignment's details.
     """
 
-    permission_classes = [IsAuthenticated]
-    allowed_roles = ['Student', 'Admin']
+    permission_classes = [RoleRequiredPermission]
+    allowed_roles = ['Student']
     serializer_class = AssignmentListSerializer
     queryset = Assignment.objects.all()

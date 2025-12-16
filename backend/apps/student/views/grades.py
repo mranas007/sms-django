@@ -6,7 +6,7 @@ from rest_framework import generics
 
 from apps.core.models import AssignmentSubmission
 from apps.student.serializers.assignment_submission import AssignmentSubmissionListSerializer
-from apps.student.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 
 
 class GradesView(generics.ListAPIView):

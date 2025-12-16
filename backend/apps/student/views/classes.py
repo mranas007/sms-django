@@ -2,7 +2,7 @@ from rest_framework import generics
 
 from apps.core.models import Class
 from apps.student.serializers.classes import ClassListSerializer
-from apps.student.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 
 
 

@@ -4,7 +4,7 @@ from apps.student.serializers.assignment_submission import (
     AssignmentSubmissionCreateSerializer,
     AssignmentSubmissionListSerializer,
 )
-from apps.student.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 
 class AssignmentSubmissionListCreateView(generics.ListCreateAPIView):
     queryset = AssignmentSubmission.objects.all()

@@ -1,7 +1,7 @@
 from rest_framework import generics
 from apps.teacher.serializers.students import StudentListSerializer
 from apps.core.models import User, Class
-from apps.teacher.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 
 
 

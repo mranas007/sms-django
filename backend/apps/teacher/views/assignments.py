@@ -9,7 +9,7 @@ from apps.teacher.serializers.Assignment import (
     SubjectNestedSerializer,
 )
 from apps.core.models import Assignment, Class, Subject
-from apps.teacher.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 
 
 #  ---------------------------------

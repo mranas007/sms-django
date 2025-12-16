@@ -6,7 +6,7 @@ from apps.core.models import AssignmentSubmission
 from apps.teacher.serializers.assignment_submission import (
     StudentAssignmentListSerializer,
 )
-from apps.teacher.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 
 
 

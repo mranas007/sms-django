@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from apps.teacher.serializers.TeacherDashboard import TeacherDashboardSerializer
-from apps.teacher.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 from apps.core.models import Class
 
 

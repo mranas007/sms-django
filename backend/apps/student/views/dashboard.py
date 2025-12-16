@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.student.permissions import RoleRequiredPermission
+from apps.core.permissions import RoleRequiredPermission
 from apps.student.serializers.StudentDashboard import StudentDashboardSerializer
 from apps.core.models import Class
 

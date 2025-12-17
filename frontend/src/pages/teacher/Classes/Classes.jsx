@@ -24,7 +24,7 @@ function Classes() {
     setError(null);
     try {
 
-      const res = await apiClient.get("teacher/dashboard/");
+      const res = await apiClient.get("teacher/classes/");
       setClasses(res.data);
 
     } catch (error) {

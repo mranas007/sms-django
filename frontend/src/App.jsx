@@ -64,6 +64,9 @@ import StudentAssignmentDetail from './pages/student/Assignments/AssignmentDetai
 import StudentAssignmentSubmission from './pages/student/Assignments/AssignmentSubmission.jsx';
 import StudentClass from './pages/student/Classes/ClassDetail.jsx';
 import Grades from './pages/student/Grade/Grades.jsx';
+import GroupList from './pages/teacher/chats/GroupList.jsx';
+import GroupCreate from './pages/teacher/chats/GroupCreate.jsx';
+import ChatRoom from './pages/teacher/chats/ChatRoom.jsx';
 
 
 
@@ -149,6 +152,9 @@ function App() {
             <Route path="/teacher/assignment/edit/:id" element={<AssignmentEdit />} />
             <Route path="/teacher/assignment-submissions" element={<StudentSubmittedAssignments />} />
             <Route path="/teacher/assignment-submissions/:id" element={<StudentSubmittedAssignmentDetail />} />
+            <Route path="/teacher/chat/groups" element={<GroupList />} />
+            <Route path="/teacher/chat/groups/create" element={<GroupCreate />} />
+            <Route path="/teacher/chat/room/:id" element={<ChatRoom />} />
 
           </Route>
 

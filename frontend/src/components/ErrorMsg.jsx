@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { FiX } from 'react-icons/fi';
 export default function ErrorMsg({ error }) {
   const [visible, setVisible] = useState(!!error);
 
@@ -12,7 +12,7 @@ export default function ErrorMsg({ error }) {
         onClick={() => setVisible(false)}
         className="ml-3 text-red-700 font-bold hover:text-red-900"
       >
-        ×
+        <FiX size={20} />
       </button>
     </div>
   );

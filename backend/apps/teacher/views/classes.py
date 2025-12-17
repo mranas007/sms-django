@@ -8,7 +8,7 @@ from apps.core.models import Class
 
 
 
-class TeacherDashboard(APIView):
+class TeacherClasses(APIView):
     permission_classes = [RoleRequiredPermission]
     allowed_roles = ['Teacher']
 

@@ -22,8 +22,10 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
     # "http://10.188.231.7:3000",
     # "http://172.18.32.1:3000",
     # "http://172.26.176.1:3000",
@@ -37,6 +39,7 @@ AUTH_USER_MODEL = "accounts.User"
 
 # Application definition
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,9 +53,11 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.activity_log",
     "apps.admin_panel",
+    "apps.chat",
     # thrid
     "rest_framework",
     "corsheaders",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -83,7 +88,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
+# WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = 'config.asgi.application'
+
+# Channel layer settings (using simple in-memory layer for practice)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 
 # Database
@@ -93,6 +109,7 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',

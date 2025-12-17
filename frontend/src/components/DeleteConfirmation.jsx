@@ -16,14 +16,14 @@ import apiClient from '../services/Api';
  * @param {React.ReactNode} [props.customTrigger] - Custom trigger element (overrides triggerType).
  */
 const DeleteConfirmation = ({ 
-  deleteUrl, 
-  onDeleteSuccess, 
-  itemName = 'item', 
+  deleteUrl, // API endpoint URL to call for deletion
+  onDeleteSuccess, // Callback function after successful deletion
+  itemName = 'item', // e.g., "Class 10-A"
   description = 'This action is permanent and cannot be undone.',
-  buttonSize = 'md', 
-  triggerType = 'button',
-  buttonText = 'Delete',
-  customTrigger = null
+  buttonSize = 'md', // 'sm', 'md', 'lg'
+  triggerType = 'button', // 'icon' or 'button'
+  buttonText = 'Delete', // Text for button trigger
+  customTrigger = null // Custom trigger element (overrides triggerType)
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

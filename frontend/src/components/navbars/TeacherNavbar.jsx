@@ -22,6 +22,7 @@ export default function TeacherNavbar() {
     { name: "Students", path: "/teacher/students" },
     { name: "Assignments", path: "/teacher/assignments" },
     { name: "Submissions", path: "/teacher/assignment-submissions" },
+    { name: "Chat", path: "/teacher/chat/groups" },
   ];
 
   return (
